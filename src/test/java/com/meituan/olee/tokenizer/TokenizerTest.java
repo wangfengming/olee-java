@@ -130,6 +130,16 @@ class TokenizerTest {
     }
 
     @Test
+    void bool() {
+        Token[] actual = this.tokenizer.tokenize("true false").toArray(new Token[]{});
+        Token[] expected = new Token[]{
+            new Token(TokenType.literal, "true", "true ").literal(true),
+            new Token(TokenType.literal, "false", "false").literal(false),
+        };
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
     void number() {
         // 数字。有小数点是 double，无小数点是 long
         Token[] actual = this.tokenizer.tokenize("-7.6 20").toArray(new Token[]{});
@@ -137,6 +147,15 @@ class TokenizerTest {
             new Token(TokenType.unaryOp, "-", "-"),
             new Token(TokenType.literal, "7.6", "7.6 ").literal(7.6D),
             new Token(TokenType.literal, "20", "20").literal(20L),
+        };
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void nil() {
+        Token[] actual = this.tokenizer.tokenize("null").toArray(new Token[]{});
+        Token[] expected = new Token[]{
+            new Token(TokenType.literal, "null", "null").literal(null),
         };
         assertArrayEquals(expected, actual);
     }

@@ -235,7 +235,7 @@ public class Parser {
 
     public void tokenObjKey() {
         String key = this.token.type == TokenType.literal
-            ? this.token.literal.toString()
+            ? this.token.literal == null ? "null" : this.token.literal.toString()
             : this.token.value;
         AstNode node = new LiteralNode(key);
         ObjectNode.ObjectEntry entry = new ObjectNode.ObjectEntry(node, null);
