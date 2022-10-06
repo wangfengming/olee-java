@@ -25,6 +25,7 @@ public class DefaultPropertyAccessor implements PropertyAccessor {
                 ? ((List<?>) target).size()
                 : ((String) target).length();
             if (index < 0) index += size;
+            if (index >= size) return null;
             if (target instanceof List) {
                 return ((List<?>) target).get(index);
             }
