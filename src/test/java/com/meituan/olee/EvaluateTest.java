@@ -22,11 +22,28 @@ class EvaluateTest {
         // +
         assertEquals(1L, (long) this.evaluator.evaluate("+1", null));
         assertEquals(3L, (long) this.evaluator.evaluate("1+2", null));
+        assertEquals(2L, (long) this.evaluator.evaluate("null+2", null));
         assertEquals(1L, (long) this.evaluator.evaluate("+x.y", variables));
         // -
         assertEquals(-1L, (long) this.evaluator.evaluate("-1", null));
         assertEquals(1L, (long) this.evaluator.evaluate("2-1", null));
         assertEquals(-1L, (long) this.evaluator.evaluate("-x.y", variables));
+        assertEquals(
+            this.evaluator.evaluate("[1,2,3,4]", null),
+            this.evaluator.evaluate("[1,2]+[3,4]", null)
+        );
+        assertEquals(
+            this.evaluator.evaluate("{a:1,b:2,c:3,d:4}", null),
+            this.evaluator.evaluate("{a:1,b:2}+{c:3,d:4}", null)
+        );
+        assertEquals(
+            this.evaluator.evaluate("[1,2]", null),
+            this.evaluator.evaluate("[1,2]+null", null)
+        );
+        assertEquals(
+            this.evaluator.evaluate("{a:1,b:2}", null),
+            this.evaluator.evaluate("{a:1,b:2}+null", null)
+        );
         // %
         assertEquals(1L, (long) this.evaluator.evaluate("4%3", null));
         // ^

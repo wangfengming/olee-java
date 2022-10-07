@@ -9,8 +9,7 @@ import com.meituan.olee.util.OperatorUtils;
 public class LogicAnd extends BinaryOpGrammar {
 
     public LogicAnd() {
-        super(20);
-        this.delay = true;
+        super(20, true);
     }
 
     @Override
