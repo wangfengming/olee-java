@@ -10,6 +10,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * priority:
+ * see: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence">Operators</a>
+ * <p>
+ * 10 || (logic or)
+ * 20 && (logic and)
+ * 30 == != (equality)
+ * 40 <= < >= > in (compare)
+ * 50 + - (add sub)
+ * 60 * / // % (mul div rem)
+ * 70 ^ (pow)
+ * 80 | (pipe)
+ * 90 ! + - (unary)
+ * 100 [] . () (member access/function call)
+ */
+
 public class Grammar {
     public final int PIPE_PRIORITY = 80;
     public final int MEMBER_PRIORITY = 100;
