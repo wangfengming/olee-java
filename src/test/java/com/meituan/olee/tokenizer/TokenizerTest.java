@@ -1,12 +1,11 @@
 package com.meituan.olee.tokenizer;
 
-import org.junit.jupiter.api.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.meituan.olee.exceptions.ParseException;
 import com.meituan.olee.grammar.Grammar;
 import com.meituan.olee.grammar.TokenType;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TokenizerTest {
     Tokenizer tokenizer = new Tokenizer(new Grammar());

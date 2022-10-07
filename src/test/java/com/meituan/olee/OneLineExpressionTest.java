@@ -1,19 +1,18 @@
 package com.meituan.olee;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.meituan.olee.evaluator.Expression;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.meituan.olee.evaluator.DefaultPropertyAccessor;
+import com.meituan.olee.evaluator.Expression;
 import com.meituan.olee.exceptions.EvaluateException;
 import com.meituan.olee.exceptions.ParseException;
 import com.meituan.olee.grammar.BinaryOpGrammar;
 import com.meituan.olee.grammar.UnaryOpGrammar;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class OneLineExpressionTest {
     OneLineExpressionEvaluator evaluator;

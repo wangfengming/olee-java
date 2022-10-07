@@ -1,10 +1,10 @@
 package com.meituan.olee.evaluator;
 
+import com.meituan.olee.grammar.Grammar;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.meituan.olee.grammar.Grammar;
 
 public class EvaluateContext {
     public PropertyAccessor propertyAccessor;

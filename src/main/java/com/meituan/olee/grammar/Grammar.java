@@ -1,12 +1,14 @@
 package com.meituan.olee.grammar;
 
+import com.meituan.olee.grammar.binaryOps.*;
+import com.meituan.olee.grammar.unaryOps.UnaryMinus;
+import com.meituan.olee.grammar.unaryOps.UnaryNot;
+import com.meituan.olee.grammar.unaryOps.UnaryPlus;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.meituan.olee.grammar.binaryOps.*;
-import com.meituan.olee.grammar.unaryOps.*;
 
 public class Grammar {
     public final int PIPE_PRIORITY = 80;

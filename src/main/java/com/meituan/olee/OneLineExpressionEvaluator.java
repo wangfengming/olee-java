@@ -1,20 +1,20 @@
 package com.meituan.olee;
 
-import java.util.List;
-import java.util.function.Function;
-
 import com.meituan.olee.ast.AstNode;
+import com.meituan.olee.evaluator.DefaultPropertyAccessor;
+import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.evaluator.Expression;
+import com.meituan.olee.evaluator.PropertyAccessor;
 import com.meituan.olee.grammar.BinaryOpGrammar;
 import com.meituan.olee.grammar.Grammar;
 import com.meituan.olee.grammar.UnaryOpGrammar;
-import com.meituan.olee.tokenizer.Token;
-import com.meituan.olee.tokenizer.Tokenizer;
 import com.meituan.olee.parser.Parser;
 import com.meituan.olee.parser.States;
-import com.meituan.olee.evaluator.DefaultPropertyAccessor;
-import com.meituan.olee.evaluator.EvaluateContext;
-import com.meituan.olee.evaluator.PropertyAccessor;
+import com.meituan.olee.tokenizer.Token;
+import com.meituan.olee.tokenizer.Tokenizer;
+
+import java.util.List;
+import java.util.function.Function;
 
 public class OneLineExpressionEvaluator {
     private final Grammar grammar;

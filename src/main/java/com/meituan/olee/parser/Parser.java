@@ -1,14 +1,17 @@
 package com.meituan.olee.parser;
 
-import java.util.*;
-
 import com.meituan.olee.ast.*;
 import com.meituan.olee.exceptions.ParseException;
+import com.meituan.olee.grammar.BinaryOpGrammar;
 import com.meituan.olee.grammar.Grammar;
 import com.meituan.olee.grammar.TokenType;
-import com.meituan.olee.grammar.BinaryOpGrammar;
 import com.meituan.olee.tokenizer.Token;
 import com.meituan.olee.util.AstUtils;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class Parser {
     Grammar grammar;

@@ -1,10 +1,10 @@
 package com.meituan.olee.grammar.binaryOps;
 
-import java.util.List;
-
 import com.meituan.olee.exceptions.EvaluateException;
 import com.meituan.olee.grammar.BinaryOpGrammar;
 import com.meituan.olee.util.OperatorUtils;
+
+import java.util.List;
 
 public class CompareIn extends BinaryOpGrammar {
     public CompareIn() {

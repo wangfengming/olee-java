@@ -1,10 +1,10 @@
 package com.meituan.olee.ast;
 
-import java.util.Objects;
-
 import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.exceptions.EvaluateException;
 import com.meituan.olee.grammar.Grammar;
+
+import java.util.Objects;
 
 public class IdentifierNode extends AstNode {
     public String value;

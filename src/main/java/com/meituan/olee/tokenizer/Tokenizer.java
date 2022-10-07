@@ -1,16 +1,16 @@
 package com.meituan.olee.tokenizer;
 
+import com.meituan.olee.exceptions.ParseException;
+import com.meituan.olee.grammar.Grammar;
+import com.meituan.olee.grammar.TokenType;
+import com.meituan.olee.util.NumberUtils;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import com.meituan.olee.exceptions.ParseException;
-import com.meituan.olee.grammar.Grammar;
-import com.meituan.olee.grammar.TokenType;
-import com.meituan.olee.util.NumberUtils;
 
 public class Tokenizer {
     private Grammar grammar;

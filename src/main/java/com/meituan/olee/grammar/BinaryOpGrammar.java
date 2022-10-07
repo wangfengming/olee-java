@@ -1,8 +1,8 @@
 package com.meituan.olee.grammar;
 
-import java.util.function.Supplier;
-
 import com.meituan.olee.exceptions.EvaluateException;
+
+import java.util.function.Supplier;
 
 public abstract class BinaryOpGrammar {
     public int priority = 0;

@@ -1,13 +1,11 @@
 package com.meituan.olee.ast;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.grammar.Grammar;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class DefNode extends AstNode {
     public List<Def> defs;

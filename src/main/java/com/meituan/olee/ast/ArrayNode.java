@@ -1,11 +1,11 @@
 package com.meituan.olee.ast;
 
+import com.meituan.olee.evaluator.EvaluateContext;
+import com.meituan.olee.grammar.Grammar;
+
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.meituan.olee.evaluator.EvaluateContext;
-import com.meituan.olee.grammar.Grammar;
 
 public class ArrayNode extends AstNode {
     public LinkedList<AstNode> value;

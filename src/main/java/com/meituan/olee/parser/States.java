@@ -1,10 +1,10 @@
 package com.meituan.olee.parser;
 
+import com.meituan.olee.grammar.TokenType;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import com.meituan.olee.grammar.TokenType;
 
 public class States {
     Map<StateType, State> states;

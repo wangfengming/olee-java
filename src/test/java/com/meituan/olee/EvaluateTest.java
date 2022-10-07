@@ -1,14 +1,13 @@
 package com.meituan.olee;
 
+import com.meituan.olee.exceptions.EvaluateException;
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-import com.meituan.olee.exceptions.EvaluateException;
 
 class EvaluateTest {
 

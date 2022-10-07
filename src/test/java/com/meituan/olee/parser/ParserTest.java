@@ -1,19 +1,17 @@
 package com.meituan.olee.parser;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.junit.jupiter.api.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.meituan.olee.ast.*;
 import com.meituan.olee.exceptions.ParseException;
 import com.meituan.olee.grammar.Grammar;
 import com.meituan.olee.tokenizer.Token;
 import com.meituan.olee.tokenizer.Tokenizer;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class ParserTest {

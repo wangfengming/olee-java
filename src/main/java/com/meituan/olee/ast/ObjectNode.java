@@ -1,13 +1,13 @@
 package com.meituan.olee.ast;
 
+import com.meituan.olee.evaluator.EvaluateContext;
+import com.meituan.olee.grammar.Grammar;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.meituan.olee.evaluator.EvaluateContext;
-import com.meituan.olee.grammar.Grammar;
 
 public class ObjectNode extends AstNode {
     public LinkedList<Entry> entries;
