@@ -1,13 +1,13 @@
 package com.meituan.olee.ast;
 
-import com.meituan.olee.evaluator.EvaluateContext;
-import com.meituan.olee.grammar.Grammar;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import com.meituan.olee.evaluator.EvaluateContext;
+import com.meituan.olee.grammar.Grammar;
 
 public class DefNode extends AstNode {
     public List<Def> defs;
@@ -20,12 +20,12 @@ public class DefNode extends AstNode {
 
     @Override
     public Object evaluate(EvaluateContext context) {
-        Map<String, Object> locals = new HashMap<>();
+        EvaluateContext newContext = context.withLocals();
         this.defs.forEach((def) -> {
-            Object value = def.value.evaluate(context.withLocals(locals));
-            locals.put(def.name, value);
+            Object value = def.value.evaluate(newContext);
+            newContext.addLocal(def.name, value);
         });
-        return this.statement.evaluate(context.withLocals(locals));
+        return this.statement.evaluate(newContext);
     }
 
     public static class Def {

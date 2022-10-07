@@ -1,10 +1,9 @@
 package com.meituan.olee.ast;
 
-import com.meituan.olee.evaluator.EvaluateContext;
-import com.meituan.olee.exceptions.EvaluateException;
-import com.meituan.olee.grammar.Grammar;
-
 import java.util.Objects;
+
+import com.meituan.olee.evaluator.EvaluateContext;
+import com.meituan.olee.grammar.Grammar;
 
 public class UnaryNode extends AstNode {
     public String operator;

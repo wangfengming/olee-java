@@ -6,7 +6,7 @@ import com.meituan.olee.util.NumberUtils;
 
 public class UnaryPlus extends UnaryOpGrammar {
     public UnaryPlus() {
-        this.priority = 90;
+        super(90);
     }
 
     @Override

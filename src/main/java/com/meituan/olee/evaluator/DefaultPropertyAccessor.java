@@ -1,13 +1,13 @@
 package com.meituan.olee.evaluator;
 
-import com.meituan.olee.exceptions.EvaluateException;
-
 import java.util.List;
 import java.util.Map;
 
+import com.meituan.olee.exceptions.EvaluateException;
+
 public class DefaultPropertyAccessor implements PropertyAccessor {
     @Override
-    public Object get(Object target, Object key) throws EvaluateException {
+    public Object get(Object target, Object key, boolean computed) throws EvaluateException {
         if (target instanceof Map) {
             return ((Map<?, ?>) target).get(key);
         }

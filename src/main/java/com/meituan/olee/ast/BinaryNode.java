@@ -1,11 +1,11 @@
 package com.meituan.olee.ast;
 
+import java.util.Objects;
+
 import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.grammar.BinaryOpGrammar;
 import com.meituan.olee.grammar.Grammar;
 import com.meituan.olee.util.AstUtils;
-
-import java.util.Objects;
 
 public class BinaryNode extends AstNode {
     public String operator;

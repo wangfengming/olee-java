@@ -44,12 +44,13 @@ class EvaluateTest {
         assertEquals(true, this.evaluator.evaluate("x!=y", variables));
         assertEquals(false, this.evaluator.evaluate("z!=y", variables));
         // < > <= >=
-        assertEquals(false, this.evaluator.evaluate("4<3", null));
-        assertEquals(true, this.evaluator.evaluate("4>3", null));
-        assertEquals(false, this.evaluator.evaluate("4<=3", null));
-        assertEquals(true, this.evaluator.evaluate("4>=3", null));
-        assertEquals(true, this.evaluator.evaluate("4<=4", null));
-        assertEquals(true, this.evaluator.evaluate("4>=4", null));
+        assertEquals(false, this.evaluator.evaluate("4<3.0", null));
+        assertEquals(true, this.evaluator.evaluate("4>3.0", null));
+        assertEquals(false, this.evaluator.evaluate("4<=3.0", null));
+        assertEquals(true, this.evaluator.evaluate("4>=3.0", null));
+        assertEquals(true, this.evaluator.evaluate("4<=4.0", null));
+        assertEquals(true, this.evaluator.evaluate("4>=4.0", null));
+        assertEquals(true, this.evaluator.evaluate("'abc'>'abb'", null));
         // in
         assertEquals(true, this.evaluator.evaluate("4 in [1,2,3,4]", null));
         assertEquals(false, this.evaluator.evaluate("5 in [1,2,3,4]", null));
@@ -241,6 +242,10 @@ class EvaluateTest {
             put("a", 1);
             put("b", 2);
         }};
+        assertEquals(
+            2L,
+            (long) this.evaluator.evaluate("def a = 2; a", variables)
+        );
         assertEquals(
             11L,
             (long) this.evaluator.evaluate("(x ? (def a = 10; a) : b) + a", variables)

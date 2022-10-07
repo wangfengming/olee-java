@@ -1,10 +1,10 @@
 package com.meituan.olee.ast;
 
+import java.util.Objects;
+
 import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.exceptions.EvaluateException;
 import com.meituan.olee.grammar.Grammar;
-
-import java.util.Objects;
 
 public class MemberNode extends AstNode {
     public AstNode left;
@@ -46,7 +46,7 @@ public class MemberNode extends AstNode {
         }
         context.leftNull = false;
         Object right = this.right.evaluate(context);
-        return context.propertyAccessor.get(left, right);
+        return context.propertyAccessor.get(left, right, this.computed);
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.meituan.olee.util.NumberUtils;
 
 public class MathDivide extends BinaryOpGrammar {
     public MathDivide() {
-        this.priority = 60;
+        super(60);
     }
 
     @Override

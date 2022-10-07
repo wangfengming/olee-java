@@ -6,7 +6,7 @@ import com.meituan.olee.util.OperatorUtils;
 
 public class CompareGe extends BinaryOpGrammar {
     public CompareGe() {
-        this.priority = 40;
+        super(40);
     }
 
     @Override

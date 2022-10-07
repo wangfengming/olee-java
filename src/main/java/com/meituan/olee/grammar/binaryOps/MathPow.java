@@ -6,7 +6,7 @@ import com.meituan.olee.util.NumberUtils;
 
 public class MathPow extends BinaryOpGrammar {
     public MathPow() {
-        this.priority = 70;
+        super(70);
         this.rtl = true;
     }
 

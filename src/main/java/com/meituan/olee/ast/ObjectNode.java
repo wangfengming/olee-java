@@ -1,19 +1,18 @@
 package com.meituan.olee.ast;
 
-import com.meituan.olee.evaluator.EvaluateContext;
-import com.meituan.olee.exceptions.EvaluateException;
-import com.meituan.olee.grammar.Grammar;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ObjectNode extends AstNode {
-    public LinkedList<ObjectEntry> entries;
+import com.meituan.olee.evaluator.EvaluateContext;
+import com.meituan.olee.grammar.Grammar;
 
-    public ObjectNode(LinkedList<ObjectEntry> entries) {
+public class ObjectNode extends AstNode {
+    public LinkedList<Entry> entries;
+
+    public ObjectNode(LinkedList<Entry> entries) {
         this.entries = entries;
     }
 
@@ -26,11 +25,11 @@ public class ObjectNode extends AstNode {
         return result;
     }
 
-    public static class ObjectEntry {
+    public static class Entry {
         public AstNode key;
         public AstNode value;
 
-        public ObjectEntry(AstNode key, AstNode value) {
+        public Entry(AstNode key, AstNode value) {
             this.key = key;
             this.value = value;
         }
@@ -39,7 +38,7 @@ public class ObjectNode extends AstNode {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            ObjectEntry that = (ObjectEntry) o;
+            Entry that = (Entry) o;
             return key.equals(that.key) && value.equals(that.value);
         }
 

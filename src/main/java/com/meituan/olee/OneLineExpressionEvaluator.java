@@ -1,5 +1,8 @@
 package com.meituan.olee;
 
+import java.util.List;
+import java.util.function.Function;
+
 import com.meituan.olee.ast.AstNode;
 import com.meituan.olee.evaluator.Expression;
 import com.meituan.olee.grammar.BinaryOpGrammar;
@@ -13,13 +16,10 @@ import com.meituan.olee.evaluator.DefaultPropertyAccessor;
 import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.evaluator.PropertyAccessor;
 
-import java.util.List;
-import java.util.function.Function;
-
 public class OneLineExpressionEvaluator {
     private final Grammar grammar;
-    private final States states;
     private final Tokenizer tokenizer;
+    private final States states;
     private final PropertyAccessor propertyAccessor;
 
     public OneLineExpressionEvaluator() {
@@ -28,12 +28,12 @@ public class OneLineExpressionEvaluator {
 
     public OneLineExpressionEvaluator(PropertyAccessor propertyAccessor) {
         this.grammar = new Grammar();
-        this.states = new States();
         this.tokenizer = new Tokenizer(this.grammar);
+        this.states = new States();
         this.propertyAccessor = propertyAccessor;
     }
 
-    public <T> Expression<T> compile(String str) {
+    public Expression compile(String str) {
         List<Token> tokens = this.tokenizer.tokenize(str);
         Parser parser = new Parser(this.grammar, this.states);
         parser.addTokens(tokens);
@@ -42,12 +42,12 @@ public class OneLineExpressionEvaluator {
         return (variables) -> {
             if (ast == null) return null;
             EvaluateContext context = new EvaluateContext(this.propertyAccessor, this.grammar, variables);
-            return (T) ast.evaluate(context);
+            return ast.evaluate(context);
         };
     }
 
-    public <T> T evaluate(String str, Object variables) {
-        Expression<T> expression = this.compile(str);
+    public Object evaluate(String str, Object variables) {
+        Expression expression = this.compile(str);
         return expression.evaluate(variables);
     }
 

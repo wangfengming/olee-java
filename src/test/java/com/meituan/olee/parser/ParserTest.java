@@ -388,12 +388,12 @@ class ParserTest {
     void objects() {
         // 对象，格式为 {a: 1, b: 2}, {'a': 1, 'b': 2}, {['a' + 1]: 1, b: 2}
         assertEquals(
-            new ObjectNode(new LinkedList<ObjectNode.ObjectEntry>() {{
-                add(new ObjectNode.ObjectEntry(
+            new ObjectNode(new LinkedList<ObjectNode.Entry>() {{
+                add(new ObjectNode.Entry(
                     new LiteralNode("foo"),
                     new LiteralNode("bar")
                 ));
-                add(new ObjectNode.ObjectEntry(
+                add(new ObjectNode.Entry(
                     new LiteralNode("tek"),
                     new BinaryNode(
                         "+",
@@ -407,11 +407,11 @@ class ParserTest {
         assertEquals("{'foo': 'bar', 'tek': 1 + 2}", this.transform("{foo: \"bar\", 'tek': 1+2}"));
 
         assertEquals(
-            new ObjectNode(new LinkedList<ObjectNode.ObjectEntry>() {{
-                add(new ObjectNode.ObjectEntry(
+            new ObjectNode(new LinkedList<ObjectNode.Entry>() {{
+                add(new ObjectNode.Entry(
                     new LiteralNode("foo"),
-                    new ObjectNode(new LinkedList<ObjectNode.ObjectEntry>() {{
-                        add(new ObjectNode.ObjectEntry(
+                    new ObjectNode(new LinkedList<ObjectNode.Entry>() {{
+                        add(new ObjectNode.Entry(
                             new LiteralNode("bar"),
                             new LiteralNode(1L)
                         ));
@@ -429,8 +429,8 @@ class ParserTest {
         assertEquals("{}", this.transform("{}"));
 
         assertEquals(
-            new ObjectNode(new LinkedList<ObjectNode.ObjectEntry>() {{
-                add(new ObjectNode.ObjectEntry(
+            new ObjectNode(new LinkedList<ObjectNode.Entry>() {{
+                add(new ObjectNode.Entry(
                     new BinaryNode(
                         "+",
                         new LiteralNode("a"),

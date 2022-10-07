@@ -1,10 +1,10 @@
 package com.meituan.olee.evaluator;
 
-import com.meituan.olee.grammar.Grammar;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.meituan.olee.grammar.Grammar;
 
 public class EvaluateContext {
     public PropertyAccessor propertyAccessor;
@@ -20,23 +20,30 @@ public class EvaluateContext {
         this.variables = variables;
     }
 
-    public EvaluateContext withLocals(Map<String, Object> locals) {
-        EvaluateContext newContext = new EvaluateContext(this.propertyAccessor, this.grammar, this.variables);
-        newContext.locals = new HashMap<>();
-        if (this.locals != null) {
-            newContext.locals.putAll(this.locals);
-        }
-        newContext.locals.putAll(locals);
-        newContext.args = this.args;
-        newContext.leftNull = this.leftNull;
-        return newContext;
-    }
-
-    public EvaluateContext withArgs(List<Object> args) {
+    private EvaluateContext copy() {
         EvaluateContext newContext = new EvaluateContext(this.propertyAccessor, this.grammar, this.variables);
         newContext.locals = this.locals;
         newContext.args = args;
         newContext.leftNull = this.leftNull;
+        return newContext;
+    }
+
+    public EvaluateContext withLocals() {
+        EvaluateContext newContext = this.copy();
+        newContext.locals = new HashMap<>();
+        if (this.locals != null) {
+            newContext.locals.putAll(this.locals);
+        }
+        return newContext;
+    }
+
+    public void addLocal(String name, Object variable) {
+        this.locals.put(name, variable);
+    }
+
+    public EvaluateContext withArgs(List<Object> args) {
+        EvaluateContext newContext = this.copy();
+        newContext.args = args;
         return newContext;
     }
 }

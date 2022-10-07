@@ -112,7 +112,7 @@ class OneLineExpressionTest {
     @Test
     void compile() {
         // 可以先解析，然后用于多次求值
-        Expression<?> expression = this.evaluator.compile("{x:y,y:x}");
+        Expression expression = this.evaluator.compile("{x:y,y:x}");
         assertEquals(
             new HashMap<String, Number>() {{
                 put("x", 2);
@@ -159,7 +159,7 @@ class OneLineExpressionTest {
         }
         OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator(new DefaultPropertyAccessor() {
             @Override
-            public Object get(Object target, Object key) throws EvaluateException {
+            public Object get(Object target, Object key, boolean computed) throws EvaluateException {
                 if (target instanceof User) {
                     if ("name".equals(key)) {
                         return ((User) target).getName();
@@ -168,7 +168,7 @@ class OneLineExpressionTest {
                         return ((User) target).getAge();
                     }
                 }
-                return super.get(target, key);
+                return super.get(target, key, computed);
             }
         });
         User variables1 = new User("张三", 18);

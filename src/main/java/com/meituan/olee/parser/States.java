@@ -17,103 +17,122 @@ public class States {
     }
 
     private void initTokenState() {
-        Map<TokenType, TokenTypeOps> expectOperand = new HashMap<>();
-        expectOperand.put(TokenType.literal, new TokenTypeOps(StateType.expectBinOp, Parser::tokenLiteral));
-        expectOperand.put(TokenType.identifier, new TokenTypeOps(StateType.expectBinOp, Parser::tokenIdentifier));
-        expectOperand.put(TokenType.unaryOp, new TokenTypeOps(Parser::tokenUnaryOp));
-        expectOperand.put(TokenType.openParen, new TokenTypeOps(StateType.subExp));
-        expectOperand.put(TokenType.openCurly, new TokenTypeOps(StateType.expectObjKey, Parser::tokenObjStart));
-        expectOperand.put(TokenType.openBracket, new TokenTypeOps(StateType.arrayVal, Parser::tokenArrayStart));
-        expectOperand.put(TokenType.def, new TokenTypeOps(StateType.def));
-        this.states.put(StateType.expectOperand, new State(expectOperand));
+        State expectOperand = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.literal, new TokenTypeOps(StateType.expectBinOp, Parser::tokenLiteral));
+            put(TokenType.identifier, new TokenTypeOps(StateType.expectBinOp, Parser::tokenIdentifier));
+            put(TokenType.unaryOp, new TokenTypeOps(Parser::tokenUnaryOp));
+            put(TokenType.openParen, new TokenTypeOps(StateType.subExp));
+            put(TokenType.openCurly, new TokenTypeOps(StateType.expectObjKey, Parser::tokenObjStart));
+            put(TokenType.openBracket, new TokenTypeOps(StateType.arrayVal, Parser::tokenArrayStart));
+            put(TokenType.def, new TokenTypeOps(StateType.def));
+        }});
+        this.states.put(StateType.expectOperand, expectOperand);
 
-        Map<TokenType, TokenTypeOps> expectBinOp = new HashMap<>();
-        expectBinOp.put(TokenType.binaryOp, new TokenTypeOps(StateType.expectOperand, Parser::tokenBinaryOp));
-        expectBinOp.put(TokenType.openBracket, new TokenTypeOps(StateType.computedMember, Parser::tokenComputedMember));
-        expectBinOp.put(TokenType.optionalBracket, new TokenTypeOps(StateType.computedMember, Parser::tokenComputedMember));
-        expectBinOp.put(TokenType.dot, new TokenTypeOps(StateType.member, Parser::tokenMember));
-        expectBinOp.put(TokenType.optionalDot, new TokenTypeOps(StateType.member, Parser::tokenMember));
-        expectBinOp.put(TokenType.openParen, new TokenTypeOps(StateType.argVal, Parser::tokenFunctionCall));
-        expectBinOp.put(TokenType.optionalParen, new TokenTypeOps(StateType.argVal, Parser::tokenFunctionCall));
-        expectBinOp.put(TokenType.pipe, new TokenTypeOps(StateType.expectTransform));
-        expectBinOp.put(TokenType.question, new TokenTypeOps(StateType.ternaryMid, Parser::tokenTernaryStart));
-        this.states.put(StateType.expectBinOp, new State(expectBinOp, true));
+        State expectBinOp = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.binaryOp, new TokenTypeOps(StateType.expectOperand, Parser::tokenBinaryOp));
+            put(TokenType.openBracket, new TokenTypeOps(StateType.computedMember, Parser::tokenComputedMember));
+            put(TokenType.optionalBracket, new TokenTypeOps(StateType.computedMember, Parser::tokenComputedMember));
+            put(TokenType.dot, new TokenTypeOps(StateType.member, Parser::tokenMember));
+            put(TokenType.optionalDot, new TokenTypeOps(StateType.member, Parser::tokenMember));
+            put(TokenType.openParen, new TokenTypeOps(StateType.argVal, Parser::tokenFunctionCall));
+            put(TokenType.optionalParen, new TokenTypeOps(StateType.argVal, Parser::tokenFunctionCall));
+            put(TokenType.pipe, new TokenTypeOps(StateType.expectTransform));
+            put(TokenType.question, new TokenTypeOps(StateType.ternaryMid, Parser::tokenTernaryStart));
+        }}, true);
+        this.states.put(StateType.expectBinOp, expectBinOp);
 
-        Map<TokenType, TokenTypeOps> member = new HashMap<>();
-        member.put(TokenType.identifier, new TokenTypeOps(StateType.expectBinOp, Parser::tokenMemberProperty));
-        this.states.put(StateType.member, new State(member, true));
+        State member = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.identifier, new TokenTypeOps(StateType.expectBinOp, Parser::tokenMemberProperty));
+        }}, true);
+        this.states.put(StateType.member, member);
 
-        Map<TokenType, TokenTypeOps> expectObjKey = new HashMap<>();
-        expectObjKey.put(TokenType.identifier, new TokenTypeOps(StateType.expectKeyValSep, Parser::tokenObjKey));
-        expectObjKey.put(TokenType.literal, new TokenTypeOps(StateType.expectKeyValSep, Parser::tokenObjKey));
-        expectObjKey.put(TokenType.openBracket, new TokenTypeOps(StateType.objKey));
-        expectObjKey.put(TokenType.closeCurly, new TokenTypeOps(StateType.expectBinOp));
-        this.states.put(StateType.expectObjKey, new State(expectObjKey));
+        State expectObjKey = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.identifier, new TokenTypeOps(StateType.expectKeyValSep, Parser::tokenObjKey));
+            put(TokenType.literal, new TokenTypeOps(StateType.expectKeyValSep, Parser::tokenObjKey));
+            put(TokenType.openBracket, new TokenTypeOps(StateType.objKey));
+            put(TokenType.closeCurly, new TokenTypeOps(StateType.expectBinOp));
+        }});
+        this.states.put(StateType.expectObjKey, expectObjKey);
 
-        Map<TokenType, TokenTypeOps> expectKeyValSep = new HashMap<>();
-        expectKeyValSep.put(TokenType.colon, new TokenTypeOps(StateType.objVal));
-        this.states.put(StateType.expectKeyValSep, new State(expectKeyValSep));
+        State expectKeyValSep = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.colon, new TokenTypeOps(StateType.objVal));
+        }});
+        this.states.put(StateType.expectKeyValSep, expectKeyValSep);
 
-        Map<TokenType, TokenTypeOps> def = new HashMap<>();
-        def.put(TokenType.identifier, new TokenTypeOps(StateType.defAssign, Parser::tokenDefName));
-        this.states.put(StateType.def, new State(def));
+        State def = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.identifier, new TokenTypeOps(StateType.defAssign, Parser::tokenDefName));
+        }});
+        this.states.put(StateType.def, def);
 
-        Map<TokenType, TokenTypeOps> defAssign = new HashMap<>();
-        defAssign.put(TokenType.assign, new TokenTypeOps(StateType.defVal));
-        this.states.put(StateType.defAssign, new State(defAssign));
+        State defAssign = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.assign, new TokenTypeOps(StateType.defVal));
+        }});
+        this.states.put(StateType.defAssign, defAssign);
 
-        Map<TokenType, TokenTypeOps> expectTransform = new HashMap<>();
-        expectTransform.put(TokenType.identifier, new TokenTypeOps(StateType.postTransform, Parser::tokenTransform));
-        expectTransform.put(TokenType.openParen, new TokenTypeOps(StateType.exprTransform, Parser::tokenTransform));
-        this.states.put(StateType.expectTransform, new State(expectTransform));
+        State expectTransform = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.identifier, new TokenTypeOps(StateType.postTransform, Parser::tokenTransform));
+            put(TokenType.openParen, new TokenTypeOps(StateType.exprTransform, Parser::tokenTransform));
+        }});
+        this.states.put(StateType.expectTransform, expectTransform);
 
-        Map<TokenType, TokenTypeOps> postTransform = new HashMap<>(expectBinOp);
-        postTransform.put(TokenType.openParen, new TokenTypeOps(StateType.argVal));
-        postTransform.remove(TokenType.optionalParen);
-        this.states.put(StateType.postTransform, new State(postTransform, true));
+        State postTransform = new State(new HashMap<TokenType, TokenTypeOps>(expectBinOp.tokenTypes) {{
+            put(TokenType.openParen, new TokenTypeOps(StateType.argVal));
+            remove(TokenType.optionalParen);
+        }}, true);
+        this.states.put(StateType.postTransform, postTransform);
     }
 
     private void initSubTreeState() {
-        Map<TokenType, StateType> computedMember = new HashMap<>();
-        computedMember.put(TokenType.closeBracket, StateType.expectBinOp);
-        this.states.put(StateType.computedMember, new State(Parser::astComputedMemberProperty, computedMember));
+        State computedMember = new State(Parser::astComputedMemberProperty, new HashMap<TokenType, StateType>() {{
+            put(TokenType.closeBracket, StateType.expectBinOp);
+        }});
+        this.states.put(StateType.computedMember, computedMember);
 
-        Map<TokenType, StateType> subExp = new HashMap<>();
-        subExp.put(TokenType.closeParen, StateType.expectBinOp);
-        this.states.put(StateType.subExp, new State(Parser::astSubExp, subExp));
+        State subExp = new State(Parser::astSubExp, new HashMap<TokenType, StateType>() {{
+            put(TokenType.closeParen, StateType.expectBinOp);
+        }});
+        this.states.put(StateType.subExp, subExp);
 
-        Map<TokenType, StateType> objKey = new HashMap<>();
-        objKey.put(TokenType.closeBracket, StateType.expectKeyValSep);
-        this.states.put(StateType.objKey, new State(Parser::astObjKey, objKey));
+        State objKey = new State(Parser::astObjKey, new HashMap<TokenType, StateType>() {{
+            put(TokenType.closeBracket, StateType.expectKeyValSep);
+        }});
+        this.states.put(StateType.objKey, objKey);
 
-        Map<TokenType, StateType> objVal = new HashMap<>();
-        objVal.put(TokenType.comma, StateType.expectObjKey);
-        objVal.put(TokenType.closeCurly, StateType.expectBinOp);
-        this.states.put(StateType.objVal, new State(Parser::astObjVal, objVal));
+        State objVal = new State(Parser::astObjVal, new HashMap<TokenType, StateType>() {{
+            put(TokenType.comma, StateType.expectObjKey);
+            put(TokenType.closeCurly, StateType.expectBinOp);
+        }});
+        this.states.put(StateType.objVal, objVal);
 
-        Map<TokenType, StateType> arrayVal = new HashMap<>();
-        arrayVal.put(TokenType.comma, StateType.arrayVal);
-        arrayVal.put(TokenType.closeBracket, StateType.expectBinOp);
-        this.states.put(StateType.arrayVal, new State(Parser::astArrayVal, arrayVal));
+        State arrayVal = new State(Parser::astArrayVal, new HashMap<TokenType, StateType>() {{
+            put(TokenType.comma, StateType.arrayVal);
+            put(TokenType.closeBracket, StateType.expectBinOp);
+        }});
+        this.states.put(StateType.arrayVal, arrayVal);
 
-        Map<TokenType, StateType> defVal = new HashMap<>();
-        defVal.put(TokenType.semi, StateType.expectOperand);
-        this.states.put(StateType.defVal, new State(Parser::astDefVal, defVal));
+        State defVal = new State(Parser::astDefVal, new HashMap<TokenType, StateType>() {{
+            put(TokenType.semi, StateType.expectOperand);
+        }});
+        this.states.put(StateType.defVal, defVal);
 
-        Map<TokenType, StateType> exprTransform = new HashMap<>();
-        exprTransform.put(TokenType.closeParen, StateType.postTransform);
-        this.states.put(StateType.exprTransform, new State(Parser::astExprTransform, exprTransform));
+        State exprTransform = new State(Parser::astExprTransform, new HashMap<TokenType, StateType>() {{
+            put(TokenType.closeParen, StateType.postTransform);
+        }});
+        this.states.put(StateType.exprTransform, exprTransform);
 
-        Map<TokenType, StateType> argVal = new HashMap<>();
-        argVal.put(TokenType.comma, StateType.argVal);
-        argVal.put(TokenType.closeParen, StateType.expectBinOp);
-        this.states.put(StateType.argVal, new State(Parser::astArgVal, argVal));
+        State argVal = new State(Parser::astArgVal, new HashMap<TokenType, StateType>() {{
+            put(TokenType.comma, StateType.argVal);
+            put(TokenType.closeParen, StateType.expectBinOp);
+        }});
+        this.states.put(StateType.argVal, argVal);
 
-        Map<TokenType, StateType> ternaryMid = new HashMap<>();
-        ternaryMid.put(TokenType.colon, StateType.ternaryEnd);
-        this.states.put(StateType.ternaryMid, new State(Parser::astTernaryMid, ternaryMid));
+        State ternaryMid = new State(Parser::astTernaryMid, new HashMap<TokenType, StateType>() {{
+            put(TokenType.colon, StateType.ternaryEnd);
+        }});
+        this.states.put(StateType.ternaryMid, ternaryMid);
 
-        this.states.put(StateType.ternaryEnd, new State(Parser::astTernaryEnd, true));
+        State astTernaryEnd = new State(Parser::astTernaryEnd, true);
+        this.states.put(StateType.ternaryEnd, astTernaryEnd);
     }
 
     State getState(StateType state) {

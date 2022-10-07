@@ -6,7 +6,7 @@ import com.meituan.olee.util.NumberUtils;
 
 public class MathPlus extends BinaryOpGrammar {
     public MathPlus() {
-        this.priority = 50;
+        super(50);
     }
 
     @Override

@@ -6,7 +6,6 @@ import com.meituan.olee.ast.*;
 import com.meituan.olee.exceptions.ParseException;
 import com.meituan.olee.grammar.Grammar;
 import com.meituan.olee.grammar.TokenType;
-import com.meituan.olee.grammar.UnaryOpGrammar;
 import com.meituan.olee.grammar.BinaryOpGrammar;
 import com.meituan.olee.tokenizer.Token;
 import com.meituan.olee.util.AstUtils;
@@ -238,7 +237,7 @@ public class Parser {
             ? this.token.literal == null ? "null" : this.token.literal.toString()
             : this.token.value;
         AstNode node = new LiteralNode(key);
-        ObjectNode.ObjectEntry entry = new ObjectNode.ObjectEntry(node, null);
+        ObjectNode.Entry entry = new ObjectNode.Entry(node, null);
         ((ObjectNode) this.cursor).entries.add(entry);
     }
 
@@ -273,13 +272,13 @@ public class Parser {
 
     public void astObjKey() {
         this.asserts(this.subTree != null);
-        ObjectNode.ObjectEntry entry = new ObjectNode.ObjectEntry(this.subTree, null);
+        ObjectNode.Entry entry = new ObjectNode.Entry(this.subTree, null);
         ((ObjectNode) this.cursor).entries.add(entry);
     }
 
     public void astObjVal() {
         this.asserts(this.subTree != null);
-        LinkedList<ObjectNode.ObjectEntry> entries = ((ObjectNode) this.cursor).entries;
+        LinkedList<ObjectNode.Entry> entries = ((ObjectNode) this.cursor).entries;
         entries.getLast().value = this.subTree;
     }
 

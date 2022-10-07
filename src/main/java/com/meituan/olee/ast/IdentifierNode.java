@@ -1,10 +1,10 @@
 package com.meituan.olee.ast;
 
+import java.util.Objects;
+
 import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.exceptions.EvaluateException;
 import com.meituan.olee.grammar.Grammar;
-
-import java.util.Objects;
 
 public class IdentifierNode extends AstNode {
     public String value;
@@ -32,7 +32,7 @@ public class IdentifierNode extends AstNode {
         if (context.variables == null) {
             throw new EvaluateException("No variables provided for evaluate");
         }
-        return context.propertyAccessor.get(context.variables, this.value);
+        return context.propertyAccessor.get(context.variables, this.value, false);
     }
 
     @Override

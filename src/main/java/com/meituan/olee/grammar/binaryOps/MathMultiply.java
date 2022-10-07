@@ -6,7 +6,7 @@ import com.meituan.olee.util.NumberUtils;
 
 public class MathMultiply extends BinaryOpGrammar {
     public MathMultiply() {
-        this.priority = 60;
+        super(60);
     }
 
     @Override

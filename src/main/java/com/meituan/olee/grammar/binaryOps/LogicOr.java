@@ -8,7 +8,7 @@ import com.meituan.olee.util.OperatorUtils;
 
 public class LogicOr extends BinaryOpGrammar {
     public LogicOr() {
-        this.priority = 20;
+        super(20);
         this.delay = true;
     }
 

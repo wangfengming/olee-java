@@ -6,7 +6,7 @@ import com.meituan.olee.util.OperatorUtils;
 
 public class UnaryNot extends UnaryOpGrammar {
     public UnaryNot() {
-        this.priority = 90;
+        super(90);
     }
 
     @Override

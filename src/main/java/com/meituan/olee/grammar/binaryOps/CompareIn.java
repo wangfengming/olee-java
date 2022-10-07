@@ -8,7 +8,7 @@ import com.meituan.olee.util.OperatorUtils;
 
 public class CompareIn extends BinaryOpGrammar {
     public CompareIn() {
-        this.priority = 40;
+        super(40);
     }
 
     @Override

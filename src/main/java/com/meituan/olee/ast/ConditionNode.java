@@ -1,10 +1,10 @@
 package com.meituan.olee.ast;
 
+import java.util.Objects;
+
 import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.grammar.Grammar;
 import com.meituan.olee.util.OperatorUtils;
-
-import java.util.Objects;
 
 public class ConditionNode extends AstNode {
     public AstNode test;
