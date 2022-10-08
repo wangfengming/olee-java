@@ -55,10 +55,15 @@ public class ConditionNode extends AstNode {
 
     @Override
     public String toExprString(Grammar grammar) {
+        if (this.consequent != null) {
+            return this.test.toExprString(grammar)
+                + " ? "
+                + this.consequent.toBoundingExprString(grammar)
+                + " : "
+                + this.alternate.toBoundingExprString(grammar);
+        }
         return this.test.toExprString(grammar)
-            + " ? "
-            + (this.consequent != null ? this.consequent.toBoundingExprString(grammar) : "")
-            + " : "
+            + " ?: "
             + this.alternate.toBoundingExprString(grammar);
     }
 

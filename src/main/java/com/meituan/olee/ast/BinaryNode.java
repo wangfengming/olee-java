@@ -61,10 +61,10 @@ public class BinaryNode extends AstNode {
         int rightPriority = AstUtils.getPriority(this.right, grammar);
         boolean rtl = AstUtils.rtl(this.left, grammar);
         String left = (rtl ? leftPriority <= priority : leftPriority < priority)
-            ? "(" + this.left.toExprString(grammar) + ")"
+            ? this.left.toBoundingExprString(grammar)
             : this.left.toExprString(grammar);
         String right = rightPriority < priority
-            ? "(" + this.right.toExprString(grammar) + ")"
+            ? this.right.toBoundingExprString(grammar)
             : this.right.toExprString(grammar);
         return left + " " + this.operator + " " + right;
     }
