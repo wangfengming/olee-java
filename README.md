@@ -36,11 +36,11 @@ TODO
 
 ## 数组
 
-使用 `[]` 可以定义数组。如 `[1,2,3,4]` 计算结果为 `[1,2,3,4]`。
+使用 `[]` 可以定义数组。如 `[1,2,3,4,'5']` 计算结果为 `ArrayList<Object>`。
 
 ## 对象
 
-使用 `{key: value}` 可以定义对象。如 `{name:'Nikola',dob:'10-July-1856'}`。
+使用 `{key: value}` 可以定义对象。如 `{name:'Nikola',age: 25,dob:'10-July-1856'}` 计算结果为 `HashMap<String, Object>`。
 
 ## 属性访问
 
@@ -50,7 +50,7 @@ TODO
 
 默认的属性访问仅支持 `Map` `List` `String`。如
 
-`{x:1}.x` => `1`, `[1,2,3][0]` => `1`, `[1,2,3][-1]` => `3`, `"abc"[-1]` => `"c"`。
+`{x:1}.x` => `1`, `{x:1}['x']` => `1`, `[1,2,3][0]` => `1`, `[1,2,3][-1]` => `3`, `"abc"[-1]` => `"c"`。
 
 ### 自定义属性访问
 
@@ -95,16 +95,20 @@ Map<String, Object> variables2 = new HashMap<String, Object>() {{
 }};
 
 assertEquals("张三", evaluator.evaluate("name", variables1));
-assertEquals("张三", evaluator.evaluate("user.name", variables2));
 assertEquals(18, (int) evaluator.evaluate("age", variables1));
+
+assertEquals("张三", evaluator.evaluate("user.name", variables2));
 assertEquals(18, (int) evaluator.evaluate("user.age", variables2));
 ```
 
-也可以借助反射，或者 `commons-beanutils` 的 `PropertyUtils.getProperty`
+也可以借助反射，或者 `commons-beanutils` 的 `PropertyUtils.getProperty`。
 
 ## 可选链
 
 `?.` `?.[]` `?.()` 可以在访问变量时，避免 `NullPointerException`。效果等同于 js 的语法。
+
+如 `a?.b.c`，当 `a==null` 时，结果为 `null`；
+当 `a!=null && a.b==null` 时，会抛出 `EvaluateException("Cannot read properties of null (reading c)")`。
 
 ## 操作符
 
@@ -144,7 +148,8 @@ assertEquals(18, (int) evaluator.evaluate("user.age", variables2));
 
 ### 三元表达式
 
-如 `a ? b : c`。同时 `a ?: b` 相当于 js 的 `a || b`。
+如 `a ? b : c`。
+同时 `a ?: b` 相当于 js 的 `a || b`。
 
 ### 新增、删除二元操作符、一元操作符
 
@@ -154,8 +159,11 @@ assertEquals(18, (int) evaluator.evaluate("user.age", variables2));
 evaluator.addBinaryOp("_=", new BinaryOpGrammar(20) {
     @Override
     public Object apply(Object left, Object right) throws EvaluateException {
-        if (left == null) return right == null;
-        return ((String) left).toLowerCase().equals(((String) right).toLowerCase());
+        if (left == null && right == null) return true;
+        if (left instanceof String && right instanceof String) {
+            return ((String) left).equalsIgnoreCase(((String) right));
+        }
+        return false;
     }
 });
 
@@ -169,6 +177,7 @@ evaluator.evaluate("'FOO' _= 'foo'", null);
 evaluator.addUnaryOp("~", new UnaryOpGrammar(1000) {
     @Override
     public Object apply(Object right) throws EvaluateException {
+        if (right == null) return 0;
         return (long) Math.floor(((Number) right).doubleValue());
     }
 });
@@ -194,7 +203,7 @@ evaluator.evaluate("1+2", null); // => throws
 | 40  | `<=` `<` `>=` `>` `in` | 比较         |
 | 50  |        `+` `-`         | 加、减、拼接     |
 | 60  |    `*` `/` `//` `%`    | 乘、除、整除、取余数 |
-| 70  |          `^`           | 指数         |
+| 70  |          `^`           | 指数(右结合)    |
 | 80  |         &#124;         | 管道         |
 | 90  |      `!` `+` `-`       | 一元操作符      |
 | 100 |  `.` `?.` `[]` `?.[]`  | 成员访问       |
@@ -289,8 +298,18 @@ evaluator.evaluate("bar|filter(@.tek != null)|map(@.tek)", variables);
 
 使用形如 `def variableName = expression; returnExpression` 的形式使用表达式内变量。
 
-如：`def a=1; def b=2;a+b` => `3`，`def a=1; def b=a+1; def b=2; a+2` => `4`
+如：`def a=1; def b=2; a+b` => `3`，`def a=1; def b=a+1; a+b` => `3`
 
 ## 注意
 
 需要注意，表达式不会修改传入的变量，也不存在赋值操作。
+
+如果表达式格式错误、不完整等，会抛出 `ParseException` 错误。比如：
+
+- `a.b ~+= c.d` 抛出 `ParseException("Invalid expression token: ~")`。
+
+如果操作符不支持对应类型、属性访问错误等，会抛出 `EvaluateException` 错误。比如：
+
+- `[1,2,3]+{x:1,y:2}` 抛出 `EvaluateException("unsupported type for +")`。
+- `{x:1}.y.z` 抛出 `EvaluateException("Cannot read properties of null (reading z)")`。
+- `(10).x` 抛出 `EvaluateException("Not supported!")`。

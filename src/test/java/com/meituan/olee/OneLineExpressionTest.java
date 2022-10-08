@@ -43,8 +43,11 @@ class OneLineExpressionTest {
         this.evaluator.addBinaryOp("_=", new BinaryOpGrammar(20) {
             @Override
             public Object apply(Object left, Object right) throws EvaluateException {
-                if (left == null) return right == null;
-                return ((String) left).toLowerCase().equals(((String) right).toLowerCase());
+                if (left == null && right == null) return true;
+                if (left instanceof String && right instanceof String) {
+                    return ((String) left).equalsIgnoreCase(((String) right));
+                }
+                return false;
             }
         });
         this.evaluator.addBinaryOp("**", new BinaryOpGrammar(10) {
