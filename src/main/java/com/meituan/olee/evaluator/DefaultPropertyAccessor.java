@@ -12,7 +12,7 @@ public class DefaultPropertyAccessor implements PropertyAccessor {
             return ((Map<?, ?>) target).get(key);
         }
 
-        if (target instanceof List || target instanceof String) {
+        if (computed && (target instanceof List || target instanceof String)) {
             int index;
             if (key instanceof Number) {
                 index = ((Number) key).intValue();
