@@ -11,7 +11,7 @@ public class EvaluateContext {
     public Grammar grammar;
     public Object variables;
     public Map<String, Object> locals;
-    public List<Object> args;
+    public Object[] args;
     public boolean leftNull;
 
     public EvaluateContext(PropertyAccessor propertyAccessor, Grammar grammar, Object variables) {
@@ -41,7 +41,7 @@ public class EvaluateContext {
         this.locals.put(name, variable);
     }
 
-    public EvaluateContext withArgs(List<Object> args) {
+    public EvaluateContext withArgs(Object[] args) {
         EvaluateContext newContext = this.copy();
         newContext.args = args;
         return newContext;

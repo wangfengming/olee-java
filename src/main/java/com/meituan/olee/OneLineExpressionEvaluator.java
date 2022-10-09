@@ -6,6 +6,7 @@ import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.evaluator.Expression;
 import com.meituan.olee.evaluator.PropertyAccessor;
 import com.meituan.olee.grammar.BinaryOpGrammar;
+import com.meituan.olee.grammar.Callback;
 import com.meituan.olee.grammar.Grammar;
 import com.meituan.olee.grammar.UnaryOpGrammar;
 import com.meituan.olee.parser.Parser;
@@ -14,7 +15,6 @@ import com.meituan.olee.tokenizer.Token;
 import com.meituan.olee.tokenizer.Tokenizer;
 
 import java.util.List;
-import java.util.function.Function;
 
 public class OneLineExpressionEvaluator {
     private final Grammar grammar;
@@ -61,7 +61,7 @@ public class OneLineExpressionEvaluator {
         this.tokenizer.updateGrammar(this.grammar);
     }
 
-    public void addTransform(String name, Function<List<?>, ?> fn) {
+    public void addTransform(String name, Callback fn) {
         this.grammar.transforms.put(name, fn);
     }
 

@@ -24,7 +24,7 @@ public class IdentifierNode extends AstNode {
     @Override
     public Object evaluate(EvaluateContext context) throws EvaluateException {
         if (context.args != null && this.isArg) {
-            return context.args.get(this.argIndex);
+            return context.args[this.argIndex];
         }
         if (context.locals != null && context.locals.containsKey(this.value)) {
             return context.locals.get(this.value);

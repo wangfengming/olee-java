@@ -8,6 +8,7 @@
 
 ```
 import com.meituan.olee.OneLineExpressionEvaluator;
+import com.meituan.olee.evaluator.Expression;
 
 OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
 
@@ -16,7 +17,7 @@ expression.evaluate('1+x', new HashMap<String, Number>() {{
 }});
 // => 3
 
-Expression<?> exp = evaluator.compile('1+x');
+Expression exp = evaluator.compile('1+x');
 exp.evalute(new HashMap<String, Number>() {{
   put("x", 2);
 }});
@@ -57,6 +58,9 @@ TODO
 若需要支持其他类型实例，需要进行设置，如：
 
 ```
+import com.meituan.olee.evaluator.DefaultPropertyAccessor;
+import com.meituan.olee.exceptions.EvaluateException;
+
 class User {
     private final String name;
     private final int age;
@@ -77,7 +81,7 @@ class User {
 
 OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator(new DefaultPropertyAccessor() {
     @Override
-    public Object get(Object target, Object key) throws EvaluateException {
+    public Object get(Object target, Object key, boolean computed) throws EvaluateException {
         if (target instanceof User) {
             if ("name".equals(key)) {
                 return ((User) target).getName();
@@ -86,7 +90,7 @@ OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator(new Defaul
                 return ((User) target).getAge();
             }
         }
-        return super.get(target, key);
+        return super.get(target, key, computed);
     }
 });
 User variables1 = new User("张三", 18);
@@ -156,6 +160,9 @@ assertEquals(18, (int) evaluator.evaluate("user.age", variables2));
 - 新增二元操作符
 
 ```
+import com.meituan.olee.grammar.BinaryOpGrammar;
+import com.meituan.olee.exceptions.EvaluateException;
+
 evaluator.addBinaryOp("_=", new BinaryOpGrammar(20) {
     @Override
     public Object apply(Object left, Object right) throws EvaluateException {
@@ -174,6 +181,9 @@ evaluator.evaluate("'FOO' _= 'foo'", null);
 - 新增一元操作符
 
 ```
+import com.meituan.olee.grammar.UnaryOpGrammar;
+import com.meituan.olee.exceptions.EvaluateException;
+
 evaluator.addUnaryOp("~", new UnaryOpGrammar(1000) {
     @Override
     public Object apply(Object right) throws EvaluateException {
@@ -213,9 +223,11 @@ evaluator.evaluate("1+2", null); // => throws
 支持方法调用，如：
 
 ```
+import com.meituan.olee.grammar.Callback;
+
 Map<String, Object> variables = new HashMap<String, Object>() {{
     put("foo", 10);
-    put("double", (Function<List<?>, Number>) ((args) -> ((Number) args.get(0)).longValue() * 2));
+    put("double", (Callback) ((args) -> ((Number) args[0]).longValue() * 2));
 }};
 
 evaluator.evaluate("double(foo)+3", variables);
@@ -246,17 +258,19 @@ evaluator.evaluate("double(foo)+3", variables);
 示例：
 
 ```
+import com.meituan.olee.grammar.Callback;
+
 OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
 evaluator.addTransform(
     "filter",
-    (args) -> ((List<?>) args.get(0)).stream()
-        .filter((item) -> ((Function<List<?>, Boolean>) args.get(1)).apply(Collections.singletonList(item)))
+    (args) -> ((List<?>) args[0]).stream()
+        .filter((item) -> (Boolean) ((Callback) args[1]).apply(item))
         .collect(Collectors.toList())
 );
 evaluator.addTransform(
     "map",
-    (args) -> ((List<?>) args.get(0)).stream()
-        .map((item) -> ((Function<List<?>, Object>) args.get(1)).apply(Collections.singletonList(item)))
+    (args) -> ((List<?>) args[0]).stream()
+        .map((item) -> ((Callback) args[1]).apply(item))
         .collect(Collectors.toList())
 );
 Map<String, Object> variables = new HashMap<String, Object>() {{

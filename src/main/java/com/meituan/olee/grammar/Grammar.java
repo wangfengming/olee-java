@@ -6,9 +6,7 @@ import com.meituan.olee.grammar.unaryOps.UnaryNot;
 import com.meituan.olee.grammar.unaryOps.UnaryPlus;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * priority:
@@ -34,7 +32,7 @@ public class Grammar {
     public final Map<String, SymbolGrammar> symbols;
     public final Map<String, UnaryOpGrammar> unaryOps;
     public final Map<String, BinaryOpGrammar> binaryOps;
-    public final Map<String, Function<List<?>, ?>> transforms = new HashMap<>();
+    public final Map<String, Callback> transforms = new HashMap<>();
 
     public Grammar() {
         this.symbols = this.initSymbols();

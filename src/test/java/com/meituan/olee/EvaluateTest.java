@@ -1,10 +1,11 @@
 package com.meituan.olee;
 
 import com.meituan.olee.exceptions.EvaluateException;
+import com.meituan.olee.grammar.Callback;
+import com.meituan.olee.util.OperatorUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -161,7 +162,7 @@ class EvaluateTest {
     void optional() {
         Map<String, Object> variables = new HashMap<>();
         variables.put("val", Collections.emptyMap());
-        variables.put("fun", (Function<List<?>, ?>) (args) -> null);
+        variables.put("fun", (Callback) (args) -> null);
 
         assertNull(this.evaluator.evaluate("foo?.bar.baz", variables));
         Exception exception1 = assertThrows(EvaluateException.class, () -> {
@@ -273,18 +274,18 @@ class EvaluateTest {
         OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
         evaluator.addTransform(
             "half",
-            (args) -> ((Number) args.get(0)).doubleValue() / 2
+            (args) -> ((Number) args[0]).doubleValue() / 2
         );
         evaluator.addTransform(
             "filter",
-            (args) -> ((List<?>) args.get(0)).stream()
-                .filter((item) -> ((Function<List<?>, Boolean>) args.get(1)).apply(Collections.singletonList(item)))
+            (args) -> ((List<?>) args[0]).stream()
+                .filter((item) -> !OperatorUtils.isFalsy(((Callback) args[1]).apply(item)))
                 .collect(Collectors.toList())
         );
         evaluator.addTransform(
             "map",
-            (args) -> ((List<?>) args.get(0)).stream()
-                .map((item) -> ((Function<List<?>, Object>) args.get(1)).apply(Collections.singletonList(item)))
+            (args) -> ((List<?>) args[0]).stream()
+                .map((item) -> ((Callback) args[1]).apply(item))
                 .collect(Collectors.toList())
         );
         Map<String, Object> variables = new HashMap<String, Object>() {{
@@ -295,9 +296,9 @@ class EvaluateTest {
                 add(Collections.singletonMap("tek", "baz"));
                 add(Collections.singletonMap("tok", "baz"));
             }});
-            put("double", (Function<List<?>, Number>) ((args) -> ((Number) args.get(0)).longValue() * 2));
+            put("double", (Callback) ((args) -> ((Number) args[0]).longValue() * 2));
             put("fns", Collections.singletonMap(
-                "half", (Function<List<?>, Number>) ((args) -> ((Number) args.get(0)).doubleValue() / 2)
+                "half", (Callback) ((args) -> ((Number) args[0]).doubleValue() / 2)
             ));
         }};
 
@@ -322,6 +323,14 @@ class EvaluateTest {
             }},
             evaluator.evaluate("bar|map('1'+(@.tek||@.tok))", variables)
         );
+        assertEquals(
+            new ArrayList<Object>() {{
+                add("hello");
+                add("baz");
+                add("baz");
+            }},
+            evaluator.evaluate("bar|filter(@.tek)|map(@.tek)", variables)
+        );
 
         Exception exception1 = assertThrows(EvaluateException.class, () -> {
             this.evaluator.evaluate("'hello'|world", variables);
@@ -334,18 +343,18 @@ class EvaluateTest {
         OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
         evaluator.addTransform(
             "half",
-            (args) -> ((Number) args.get(0)).doubleValue() / 2
+            (args) -> ((Number) args[0]).doubleValue() / 2
         );
         evaluator.addTransform(
             "filter",
-            (args) -> ((List<?>) args.get(0)).stream()
-                .filter((item) -> ((Function<List<?>, Boolean>) args.get(1)).apply(Collections.singletonList(item)))
+            (args) -> ((List<?>) args[0]).stream()
+                .filter((item) -> !OperatorUtils.isFalsy(((Callback) args[1]).apply(item)))
                 .collect(Collectors.toList())
         );
         evaluator.addTransform(
             "map",
-            (args) -> ((List<?>) args.get(0)).stream()
-                .map((item) -> ((Function<List<?>, Object>) args.get(1)).apply(Collections.singletonList(item)))
+            (args) -> ((List<?>) args[0]).stream()
+                .map((item) -> ((Callback) args[1]).apply(item))
                 .collect(Collectors.toList())
         );
         Map<String, Object> variables = new HashMap<String, Object>() {{
@@ -356,9 +365,9 @@ class EvaluateTest {
                 add(Collections.singletonMap("tek", "baz"));
                 add(Collections.singletonMap("tok", "baz"));
             }});
-            put("double", (Function<List<?>, Number>) ((args) -> ((Number) args.get(0)).longValue() * 2));
+            put("double", (Callback) ((args) -> ((Number) args[0]).longValue() * 2));
             put("fns", Collections.singletonMap(
-                "half", (Function<List<?>, Number>) ((args) -> ((Number) args.get(0)).doubleValue() / 2)
+                "half", (Callback) ((args) -> ((Number) args[0]).doubleValue() / 2)
             ));
         }};
 
@@ -382,6 +391,14 @@ class EvaluateTest {
                 add("1baz");
             }},
             evaluator.evaluate("map(bar,'1'+(@.tek||@.tok))", variables)
+        );
+        assertEquals(
+            new ArrayList<Object>() {{
+                add("hello");
+                add("baz");
+                add("baz");
+            }},
+            evaluator.evaluate("map(filter(bar,@.tek),@.tek)", variables)
         );
 
         Exception exception1 = assertThrows(EvaluateException.class, () -> {

@@ -2,11 +2,11 @@ package com.meituan.olee.ast;
 
 import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.exceptions.EvaluateException;
+import com.meituan.olee.grammar.Callback;
 import com.meituan.olee.grammar.Grammar;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FunctionCallNode extends AstNode {
@@ -55,13 +55,13 @@ public class FunctionCallNode extends AstNode {
             throw new EvaluateException("null is not a function");
         }
         context.leftNull = false;
-        if (!(fn instanceof Function)) {
+        if (!(fn instanceof Callback)) {
             throw new EvaluateException(fn + " is not a function");
         }
-        List<Object> args = this.args.stream()
+        Object[] args = this.args.stream()
             .map((node) -> node.evaluate(context))
-            .collect(Collectors.toList());
-        return ((Function<List<Object>, Object>) fn).apply(args);
+            .toArray();
+        return ((Callback) fn).apply(args);
     }
 
     @Override

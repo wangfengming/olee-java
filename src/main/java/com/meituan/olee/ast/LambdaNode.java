@@ -1,11 +1,10 @@
 package com.meituan.olee.ast;
 
 import com.meituan.olee.evaluator.EvaluateContext;
+import com.meituan.olee.grammar.Callback;
 import com.meituan.olee.grammar.Grammar;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 public class LambdaNode extends AstNode {
     public AstNode expr;
@@ -15,7 +14,7 @@ public class LambdaNode extends AstNode {
     }
 
     @Override
-    public Function<List<Object>, Object> evaluate(EvaluateContext context) {
+    public Callback evaluate(EvaluateContext context) {
         return (args) -> this.expr.evaluate(context.withArgs(args));
     }
 
