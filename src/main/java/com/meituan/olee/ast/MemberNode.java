@@ -9,6 +9,7 @@ import java.util.Objects;
 public class MemberNode extends AstNode {
     public AstNode left;
     public AstNode right;
+    // computed=true 表示 left[right]; computed=false 表示 left.right
     public boolean computed;
 
     public MemberNode(AstNode left, AstNode right) {
@@ -35,10 +36,12 @@ public class MemberNode extends AstNode {
     public Object evaluate(EvaluateContext context) throws EvaluateException {
         Object left = this.left.evaluate(context);
         if (left == null) {
+            // a?.b
             if (this.optional) {
                 context.leftNull = true;
                 return null;
             }
+            // a?.b.c
             if (this.leftOptional && context.leftNull) {
                 return null;
             }

@@ -24,9 +24,11 @@ public class IdentifierNode extends AstNode {
     @Override
     public Object evaluate(EvaluateContext context) throws EvaluateException {
         if (context.args != null && this.isArg) {
+            // lambda 参数
             return context.args[this.argIndex];
         }
         if (context.locals != null && context.locals.containsKey(this.value)) {
+            // 读取 def 定义的变量
             return context.locals.get(this.value);
         }
         if (context.variables == null) {

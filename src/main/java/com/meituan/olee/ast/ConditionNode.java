@@ -26,6 +26,7 @@ public class ConditionNode extends AstNode {
         if (this.consequent != null) {
             return this.consequent.evaluate(context);
         }
+        // 支持 a ?: b 语法。
         return test;
     }
 

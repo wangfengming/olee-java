@@ -39,16 +39,19 @@ public class FunctionCallNode extends AstNode {
     public Object evaluate(EvaluateContext context) {
         Object fn = null;
         if (this.func instanceof IdentifierNode) {
+            // 优先读取 transforms
             fn = context.grammar.transforms.get(((IdentifierNode) this.func).value);
         }
         if (fn == null) {
             fn = this.func.evaluate(context);
         }
         if (fn == null) {
+            // a?.b
             if (this.optional) {
                 context.leftNull = true;
                 return null;
             }
+            // a?.b.c
             if (this.leftOptional && context.leftNull) {
                 return null;
             }

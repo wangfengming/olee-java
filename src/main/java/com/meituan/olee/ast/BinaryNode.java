@@ -23,6 +23,7 @@ public class BinaryNode extends AstNode {
         BinaryOpGrammar binaryOp = context.grammar.binaryOps.get(this.operator);
         Object left = this.left.evaluate(context);
         if (binaryOp.delay) {
+            // 符合短路原则
             return binaryOp.applyDelay(left, () -> this.right.evaluate(context));
         }
         return binaryOp.apply(left, this.right.evaluate(context));

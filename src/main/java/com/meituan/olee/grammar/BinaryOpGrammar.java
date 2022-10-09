@@ -6,7 +6,9 @@ import java.util.function.Supplier;
 
 public abstract class BinaryOpGrammar {
     public int priority = 0;
+    // 是否符合短路原则
     public boolean delay = false;
+    // 是否右结合，如 a ^ b ^ c 表示 a ^ (b ^ c) 即 Math.pow(a, Math.pow(b, c))
     public boolean rtl = false;
 
     public BinaryOpGrammar() {

@@ -10,7 +10,7 @@ public class OperatorUtils {
 
     /**
      * 比较对象大小，和 js 对齐，不做 deep equality 判断。
-     * 基本类型和比较相等，引用类型比较指针。不相等的引用，> < 的结果都是 false。
+     * 基本类型比较相等，引用类型比较指针。不相等的引用，> < 的结果都是 false。
      *
      * @param left  left Object to compare
      * @param right right Object to compare
@@ -51,7 +51,7 @@ public class OperatorUtils {
     }
 
     /**
-     * 是否为假值。
+     * 是否为假值。可以在 `&&` `||` `!` `?:` 中使用
      * <a href="https://developer.mozilla.org/en-US/docs/Glossary/Falsy">MDN Falsy</a>
      */
     public static boolean isFalsy(Object obj) {
