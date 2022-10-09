@@ -5,6 +5,7 @@ import com.meituan.olee.evaluator.DefaultPropertyAccessor;
 import com.meituan.olee.evaluator.EvaluateContext;
 import com.meituan.olee.evaluator.Expression;
 import com.meituan.olee.evaluator.PropertyAccessor;
+import com.meituan.olee.exceptions.ParseException;
 import com.meituan.olee.grammar.BinaryOpGrammar;
 import com.meituan.olee.grammar.Callback;
 import com.meituan.olee.grammar.Grammar;
@@ -15,6 +16,7 @@ import com.meituan.olee.tokenizer.Token;
 import com.meituan.olee.tokenizer.Tokenizer;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class OneLineExpressionEvaluator {
     private final Grammar grammar;
@@ -33,7 +35,7 @@ public class OneLineExpressionEvaluator {
         this.propertyAccessor = propertyAccessor;
     }
 
-    public Expression compile(String str) {
+    public Expression compile(String str) throws ParseException {
         List<Token> tokens = this.tokenizer.tokenize(str);
         Parser parser = new Parser(this.grammar, this.states);
         parser.addTokens(tokens);
@@ -46,7 +48,7 @@ public class OneLineExpressionEvaluator {
         };
     }
 
-    public Object evaluate(String str, Object variables) {
+    public Object evaluate(String str, Object variables) throws ParseException, ExecutionException {
         Expression expression = this.compile(str);
         return expression.evaluate(variables);
     }

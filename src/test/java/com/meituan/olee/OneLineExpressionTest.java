@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +24,7 @@ class OneLineExpressionTest {
     }
 
     @Test
-    void evaluate() {
+    void evaluate() throws ExecutionException {
         assertEquals(
             4L,
             (long) this.evaluator.evaluate("2+2", null)
@@ -38,7 +39,7 @@ class OneLineExpressionTest {
     }
 
     @Test
-    void addBinaryOp() {
+    void addBinaryOp() throws ExecutionException {
         // 新增二元操作符
         this.evaluator.addBinaryOp("_=", new BinaryOpGrammar(20) {
             @Override
@@ -70,7 +71,7 @@ class OneLineExpressionTest {
     }
 
     @Test
-    void addUnaryOp() {
+    void addUnaryOp() throws ExecutionException {
         // 新增一元操作符
         this.evaluator.addUnaryOp("~", new UnaryOpGrammar(1000) {
             @Override
@@ -138,7 +139,7 @@ class OneLineExpressionTest {
     }
 
     @Test
-    void customAccessor() {
+    void customAccessor() throws ExecutionException {
         // 可以自定义属性访问。
         // 形如 x.y 的形式，会被解析为 propertyAccessor(x, "y");
         // 形如 x[y] 的形式，会被解析为 propertyAccessor(x, y)，此时的 y 不一定是字符串。

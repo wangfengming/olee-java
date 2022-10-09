@@ -6,6 +6,7 @@ import com.meituan.olee.util.OperatorUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +16,7 @@ class EvaluateTest {
     OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
 
     @Test
-    void grammars() {
+    void grammars() throws ExecutionException {
         Map<?, ?> variables = Collections.singletonMap(
             "x", Collections.singletonMap("y", "1")
         );
@@ -81,7 +82,7 @@ class EvaluateTest {
     }
 
     @Test
-    void literal() {
+    void literal() throws ExecutionException {
         assertEquals(1L, (long) this.evaluator.evaluate("1", null));
         assertEquals(1D, this.evaluator.evaluate("1.0", null));
         assertEquals(true, this.evaluator.evaluate("true", null));
@@ -91,7 +92,7 @@ class EvaluateTest {
     }
 
     @Test
-    void unary() {
+    void unary() throws ExecutionException {
         Map<?, ?> variables = Collections.singletonMap(
             "x", Collections.singletonMap("y", "1")
         );
@@ -102,7 +103,7 @@ class EvaluateTest {
 
 
     @Test
-    void binary() {
+    void binary() throws ExecutionException {
         assertEquals(20L, (long) this.evaluator.evaluate("(2 + 3) * 4", null));
         assertEquals(512L, (long) this.evaluator.evaluate("2 ^ 3 ^ 2", null));
         assertEquals(64L, (long) this.evaluator.evaluate("(2 ^ 3) ^ 2", null));
@@ -119,7 +120,7 @@ class EvaluateTest {
     }
 
     @Test
-    void ternary() {
+    void ternary() throws ExecutionException {
         assertEquals(1L, (long) this.evaluator.evaluate("'foo' ? 1 : 2", null));
         assertEquals(2L, (long) this.evaluator.evaluate("'' ? 1 : 2", null));
         assertEquals(2L, (long) this.evaluator.evaluate("'foo' ? 0 ? 1 : 2 : 3", null));
@@ -127,7 +128,7 @@ class EvaluateTest {
     }
 
     @Test
-    void member() {
+    void member() throws ExecutionException {
         Map<String, Object> variables1 = Collections.singletonMap(
             "foo",
             Collections.singletonMap(
@@ -159,7 +160,7 @@ class EvaluateTest {
     }
 
     @Test
-    void optional() {
+    void optional() throws ExecutionException {
         Map<String, Object> variables = new HashMap<>();
         variables.put("val", Collections.emptyMap());
         variables.put("fun", (Callback) (args) -> null);
@@ -190,7 +191,7 @@ class EvaluateTest {
     }
 
     @Test
-    void object() {
+    void object() throws ExecutionException {
         assertEquals(
             new HashMap<String, Object>() {{
                 put("foo", new HashMap<String, Object>() {{
@@ -222,7 +223,7 @@ class EvaluateTest {
     }
 
     @Test
-    void array() {
+    void array() throws ExecutionException {
         assertEquals(
             new ArrayList<Object>() {{
                 add("foo");
@@ -241,7 +242,7 @@ class EvaluateTest {
     }
 
     @Test
-    void def() {
+    void def() throws ExecutionException {
         assertEquals(
             3L,
             (long) this.evaluator.evaluate("def a=1; def b=2;a+b", null)
@@ -270,7 +271,7 @@ class EvaluateTest {
     }
 
     @Test
-    void transform() {
+    void transform() throws ExecutionException {
         OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
         evaluator.addTransform(
             "half",
@@ -339,7 +340,7 @@ class EvaluateTest {
     }
 
     @Test
-    void functionCall() {
+    void functionCall() throws ExecutionException {
         OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
         evaluator.addTransform(
             "half",
@@ -408,7 +409,7 @@ class EvaluateTest {
     }
 
     @Test
-    void lambda() {
+    void lambda() throws ExecutionException {
         Map<String, Object> variables = new HashMap<String, Object>() {{
             put("foo", 10);
         }};
@@ -430,7 +431,7 @@ class EvaluateTest {
     }
 
     @Test
-    void whitespace() {
+    void whitespace() throws ExecutionException {
         assertEquals(
             20L,
             (long) this.evaluator.evaluate("(\t2\n+\n3) *\n4\n\r\n", null)
