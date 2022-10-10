@@ -17,21 +17,17 @@ public class MathPlus extends BinaryOpGrammar {
 
     @Override
     public Object apply(Object left, Object right) throws EvaluateException {
-        // ? + null => ?
-        if (left == null && this.isSupported(right)) {
+        // null + number/string => number/string
+        if (left == null && (right instanceof Number || right instanceof String)) {
             return right;
         }
-        // null + ? => ?
-        if (right == null && this.isSupported(left)) {
+        // number/string + null => number/string
+        if (right == null && (left instanceof Number || left instanceof String)) {
             return left;
         }
         // number + number => number
         if (left instanceof Number && right instanceof Number) {
             return NumberUtils.plus((Number) left, (Number) right);
-        }
-        // string + string => string
-        if (left instanceof String && right instanceof String) {
-            return (String) left + right;
         }
         // string + number => string
         if (left instanceof String && right instanceof Number) {
@@ -41,23 +37,10 @@ public class MathPlus extends BinaryOpGrammar {
         if (left instanceof Number && right instanceof String) {
             return left.toString() + right;
         }
-        if (left instanceof Map && right instanceof Map) {
-            Map<Object, Object> result = new HashMap<>((Map<?, ?>) left);
-            result.putAll((Map<?, ?>) right);
-            return result;
-        }
-        if (left instanceof List && right instanceof List) {
-            List<Object> result = new ArrayList<>((List<?>) left);
-            result.addAll((List<?>) right);
-            return result;
+        // string + string => string
+        if (left instanceof String && right instanceof String) {
+            return (String) left + right;
         }
         throw new EvaluateException("unsupported type for +");
-    }
-
-    private boolean isSupported(Object target) {
-        return target instanceof Number
-            || target instanceof String
-            || target instanceof List
-            || target instanceof Map;
     }
 }

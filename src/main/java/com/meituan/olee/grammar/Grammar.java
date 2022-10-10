@@ -12,7 +12,7 @@ import java.util.Map;
  * priority:
  * see: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence">Operators</a>
  * <p>
- * 10 || (logic or)
+ * 10 || ?? (logic or/nullish coalescing)
  * 20 && (logic and)
  * 30 == != (equality)
  * 40 <= < >= > in (compare)
@@ -95,6 +95,7 @@ public class Grammar {
 
         binaryOps.put("&&", new LogicAnd());
         binaryOps.put("||", new LogicOr());
+        binaryOps.put("??", new LogicNullish());
 
         return binaryOps;
     }

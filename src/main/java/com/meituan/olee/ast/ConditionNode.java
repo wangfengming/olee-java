@@ -19,15 +19,9 @@ public class ConditionNode extends AstNode {
 
     @Override
     public Object evaluate(EvaluateContext context) {
-        Object test = this.test.evaluate(context);
-        if (OperatorUtils.isFalsy(test)) {
-            return this.alternate.evaluate(context);
-        }
-        if (this.consequent != null) {
-            return this.consequent.evaluate(context);
-        }
-        // 支持 a ?: b 语法。
-        return test;
+        return OperatorUtils.isFalsy(this.test.evaluate(context))
+            ? this.alternate.evaluate(context)
+            : this.consequent.evaluate(context);
     }
 
     @Override
@@ -36,7 +30,7 @@ public class ConditionNode extends AstNode {
         if (o == null || getClass() != o.getClass()) return false;
         ConditionNode that = (ConditionNode) o;
         return test.equals(that.test)
-            && Objects.equals(consequent, that.consequent)
+            && consequent.equals(that.consequent)
             && alternate.equals(that.alternate);
     }
 
@@ -56,15 +50,10 @@ public class ConditionNode extends AstNode {
 
     @Override
     public String toExprString(Grammar grammar) {
-        if (this.consequent != null) {
-            return this.test.toExprString(grammar)
-                + " ? "
-                + this.consequent.toBoundingExprString(grammar)
-                + " : "
-                + this.alternate.toBoundingExprString(grammar);
-        }
         return this.test.toExprString(grammar)
-            + " ?: "
+            + " ? "
+            + this.consequent.toBoundingExprString(grammar)
+            + " : "
             + this.alternate.toBoundingExprString(grammar);
     }
 

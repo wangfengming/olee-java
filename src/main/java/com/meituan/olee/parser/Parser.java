@@ -286,6 +286,7 @@ public class Parser {
     }
 
     public void astTernaryMid() {
+        this.asserts(this.subTree != null);
         ((ConditionNode) this.cursor).consequent = this.subTree;
     }
 

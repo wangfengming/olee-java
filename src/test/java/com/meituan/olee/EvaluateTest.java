@@ -29,22 +29,6 @@ class EvaluateTest {
         assertEquals(-1L, (long) this.evaluator.evaluate("-1", null));
         assertEquals(1L, (long) this.evaluator.evaluate("2-1", null));
         assertEquals(-1L, (long) this.evaluator.evaluate("-x.y", variables));
-        assertEquals(
-            this.evaluator.evaluate("[1,2,3,4]", null),
-            this.evaluator.evaluate("[1,2]+[3,4]", null)
-        );
-        assertEquals(
-            this.evaluator.evaluate("{a:1,b:2,c:3,d:4}", null),
-            this.evaluator.evaluate("{a:1,b:2}+{c:3,d:4}", null)
-        );
-        assertEquals(
-            this.evaluator.evaluate("[1,2]", null),
-            this.evaluator.evaluate("[1,2]+null", null)
-        );
-        assertEquals(
-            this.evaluator.evaluate("{a:1,b:2}", null),
-            this.evaluator.evaluate("{a:1,b:2}+null", null)
-        );
         // %
         assertEquals(1L, (long) this.evaluator.evaluate("4%3", null));
         // ^
@@ -79,6 +63,16 @@ class EvaluateTest {
         assertEquals(true, this.evaluator.evaluate("!z", variables));
         // ||
         assertEquals(true, this.evaluator.evaluate("true || false", null));
+        assertEquals("b", this.evaluator.evaluate("null || 'b'", null));
+        assertEquals("b", this.evaluator.evaluate("0 || 'b'", null));
+        assertEquals("b", this.evaluator.evaluate("'' || 'b'", null));
+        assertEquals("a", this.evaluator.evaluate("'a' || 'b'", null));
+        // ??
+        assertEquals(true, this.evaluator.evaluate("true ?? false", null));
+        assertEquals("b", this.evaluator.evaluate("null ?? 'b'", null));
+        assertEquals(0L, this.evaluator.evaluate("0 ?? 'b'", null));
+        assertEquals("", this.evaluator.evaluate("'' ?? 'b'", null));
+        assertEquals("a", this.evaluator.evaluate("'a' ?? 'b'", null));
     }
 
     @Test
@@ -124,7 +118,6 @@ class EvaluateTest {
         assertEquals(1L, (long) this.evaluator.evaluate("'foo' ? 1 : 2", null));
         assertEquals(2L, (long) this.evaluator.evaluate("'' ? 1 : 2", null));
         assertEquals(2L, (long) this.evaluator.evaluate("'foo' ? 0 ? 1 : 2 : 3", null));
-        assertEquals("foo", this.evaluator.evaluate("'foo' ?: 'bar'", null));
     }
 
     @Test
@@ -153,10 +146,9 @@ class EvaluateTest {
         assertEquals("tek", this.evaluator.evaluate("foo.bar.baz", variables1));
         assertEquals("baz", this.evaluator.evaluate("foo.bar[1].tek", variables2));
         assertEquals(1, (int) this.evaluator.evaluate("a[0]", variables2));
-        assertEquals(3, (int) this.evaluator.evaluate("a[-1]", variables2));
         assertEquals(3, (int) this.evaluator.evaluate("a[1+1]", variables2));
         assertEquals("tek", this.evaluator.evaluate("foo['ba' + 'r'].baz", variables1));
-        assertEquals("c", this.evaluator.evaluate("'abc'[-1]", null));
+        assertEquals("c", this.evaluator.evaluate("'abc'[2]", null));
     }
 
     @Test
@@ -233,10 +225,10 @@ class EvaluateTest {
         );
         assertEquals(
             3L,
-            (long) this.evaluator.evaluate("['foo', 1+2][-1]", null)
+            (long) this.evaluator.evaluate("['foo', 1+2][1]", null)
         );
         assertEquals(
-            new ArrayList<Object>(),
+            new ArrayList<>(),
             this.evaluator.evaluate("[]", null)
         );
     }
