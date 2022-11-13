@@ -114,6 +114,9 @@ public class Parser {
 
     private void endSubExp() {
         AstNode ast = this.subParser.complete();
+        if (this.state.required) {
+            this.asserts(ast != null);
+        }
         if (ast != null && ast.isMaybeLambda) {
             this.isMaybeLambda = true;
         }
@@ -224,7 +227,6 @@ public class Parser {
     }
 
     public void astComputedMemberProperty() {
-        this.asserts(this.subTree != null);
         ((MemberNode) this.cursor).right = this.subTree;
     }
 
@@ -233,7 +235,6 @@ public class Parser {
     }
 
     public void astDefVal() {
-        this.asserts(this.subTree != null);
         this.defs.getLast().value = this.maybeLambda(this.subTree);
     }
 
@@ -261,24 +262,20 @@ public class Parser {
     }
 
     public void astObjKey() {
-        this.asserts(this.subTree != null);
         ObjectNode.Entry entry = new ObjectNode.Entry(this.subTree, null);
         ((ObjectNode) this.cursor).entries.add(entry);
     }
 
     public void astObjVal() {
-        this.asserts(this.subTree != null);
         LinkedList<ObjectNode.Entry> entries = ((ObjectNode) this.cursor).entries;
         entries.getLast().value = this.subTree;
     }
 
     public void astObjSpreadVal() {
-        this.asserts(this.subTree != null);
         ((ObjectNode) this.cursor).entries.add(new ObjectNode.Entry(new SpreadNode(this.subTree)));
     }
 
     public void astSpread() {
-        this.asserts(this.subTree != null);
         this.placeAtCursor(new SpreadNode(this.subTree));
     }
 
@@ -288,12 +285,10 @@ public class Parser {
     }
 
     public void astTernaryMid() {
-        this.asserts(this.subTree != null);
         ((ConditionNode) this.cursor).consequent = this.subTree;
     }
 
     public void astTernaryEnd() {
-        this.asserts(this.subTree != null);
         ((ConditionNode) this.cursor).alternate = this.subTree;
     }
 
@@ -308,7 +303,6 @@ public class Parser {
     }
 
     public void astExprTransform() {
-        this.asserts(this.subTree != null);
         this.isMaybeLambda = false;
         ((FunctionCallNode) this.cursor).func = this.maybeLambda(this.subTree);
     }
@@ -337,14 +331,11 @@ public class Parser {
     }
 
     public void astFnExpr() {
-        this.asserts(this.subTree != null);
-        ((FunctionNode) this.cursor).expr = this.subTree;
         this.isMaybeLambda = false;
+        ((FunctionNode) this.cursor).expr = this.subTree;
     }
 
     public void astSubExp() {
-        this.asserts(this.subTree != null);
         this.placeAtCursor(this.subTree);
     }
-
 }
