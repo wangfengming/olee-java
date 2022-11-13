@@ -272,6 +272,16 @@ public class Parser {
         entries.getLast().value = this.subTree;
     }
 
+    public void astObjSpreadVal() {
+        this.asserts(this.subTree != null);
+        ((ObjectNode) this.cursor).entries.add(new ObjectNode.Entry(new SpreadNode(this.subTree)));
+    }
+
+    public void astSpread() {
+        this.asserts(this.subTree != null);
+        this.placeAtCursor(new SpreadNode(this.subTree));
+    }
+
     public void tokenTernaryStart() {
         this.tree = new ConditionNode(this.tree, null, null);
         this.cursor = this.tree;

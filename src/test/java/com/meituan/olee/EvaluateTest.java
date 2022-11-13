@@ -200,6 +200,32 @@ class EvaluateTest {
 
         assertEquals(
             new HashMap<String, Object>() {{
+                put("b", 2L);
+                put("c", 3L);
+            }},
+            this.evaluator.evaluate("{...{b:2,c:3}}", null)
+        );
+
+        assertEquals(
+            new HashMap<String, Object>() {{
+                put("a", 1L);
+                put("b", 2L);
+                put("c", 3L);
+            }},
+            this.evaluator.evaluate("{a:1,...{b:2,c:3}}", null)
+        );
+
+        assertEquals(
+            new HashMap<String, Object>() {{
+                put("b", 2L);
+                put("c", 3L);
+                put("d", 4L);
+            }},
+            this.evaluator.evaluate("{...{b:2,c:3},d:4}", null)
+        );
+
+        assertEquals(
+            new HashMap<String, Object>() {{
                 put("a1", 1L);
             }},
             this.evaluator.evaluate("{['a'+1]:1}", null)
@@ -230,6 +256,31 @@ class EvaluateTest {
         assertEquals(
             new ArrayList<>(),
             this.evaluator.evaluate("[]", null)
+        );
+        assertEquals(
+            new ArrayList<Object>() {{
+                add("2");
+                add("3");
+            }},
+            this.evaluator.evaluate("[...'23']", null)
+        );
+        assertEquals(
+            new ArrayList<Object>() {{
+                add(1L);
+                add("2");
+                add("3");
+                add(4L);
+            }},
+            this.evaluator.evaluate("[1,...'23',4]", null)
+        );
+        assertEquals(
+            new ArrayList<Object>() {{
+                add(1L);
+                add(2L);
+                add(3L);
+                add(4L);
+            }},
+            this.evaluator.evaluate("[1,...[2,3],4]", null)
         );
     }
 

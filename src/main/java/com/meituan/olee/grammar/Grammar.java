@@ -62,6 +62,7 @@ public class Grammar {
         symbols.put(";", new SymbolGrammar(TokenType.semi));
         symbols.put("fn", new SymbolGrammar(TokenType.fn));
         symbols.put("=>", new SymbolGrammar(TokenType.arrow));
+        symbols.put("...", new SymbolGrammar(TokenType.spread));
 
         return symbols;
     }

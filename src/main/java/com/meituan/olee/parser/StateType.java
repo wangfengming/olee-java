@@ -8,6 +8,8 @@ public enum StateType {
     objKey,
     expectKeyValSep,
     objVal,
+    spread,
+    objSpreadVal,
     computedMember,
     member,
     def,

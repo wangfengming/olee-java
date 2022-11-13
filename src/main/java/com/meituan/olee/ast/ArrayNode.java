@@ -1,10 +1,10 @@
 package com.meituan.olee.ast;
 
 import com.meituan.olee.evaluator.EvaluateContext;
+import com.meituan.olee.exceptions.EvaluateException;
 import com.meituan.olee.grammar.Grammar;
 
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ArrayNode extends AstNode {
@@ -16,7 +16,27 @@ public class ArrayNode extends AstNode {
 
     @Override
     public Object evaluate(EvaluateContext context) {
-        return this.value.stream().map((node) -> node.evaluate(context)).collect(Collectors.toList());
+        ArrayList<Object> result = new ArrayList<>();
+        this.value.forEach((node) -> {
+            Object value = node.evaluate(context);
+            if (node instanceof SpreadNode) {
+                if (value == null) return;
+                if (value instanceof String) {
+                    List<String> values = ((String) value)
+                        .codePoints()
+                        .mapToObj((cp) -> new String(Character.toChars(cp)))
+                        .collect(Collectors.toList());
+                    result.addAll(values);
+                } else if (value instanceof Collection) {
+                    result.addAll((Collection<?>) value);
+                } else {
+                    throw new EvaluateException("unsupported type for ...[]");
+                }
+            } else {
+                result.add(value);
+            }
+        });
+        return result;
     }
 
     @Override

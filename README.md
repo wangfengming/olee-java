@@ -153,6 +153,16 @@ assertEquals(18, (int) evaluator.evaluate("user.age", variables2));
 
 如 `a ? b : c`。
 
+### 展开操作符
+
+可以在构造数组时，将数组或者 string 在语法层面展开；可以在构造对象时，将对象按 key-value 的方式展开。
+
+| 表达式                      | 结果                  |
+|--------------------------|:--------------------|
+| `[1,...[2,3],4]`         | `[1,2,3,4]`         |
+| `[1,'23',4]`             | `[1,'2','3',4]`     |
+| `{a:1,...{b:2,c:3},d:4}` | `{a:1,b:2,c:3,d:4}` |
+
 ### 新增、删除二元操作符、一元操作符
 
 - 新增二元操作符
@@ -244,8 +254,7 @@ evaluator.evaluate("double(foo)+3", variables);
 
 比如：`baz(bar(foo,1))` 可以简化为 `foo|bar(1)|baz`，更容易理解。
 
-需要注意，如果是 `foo.bar(baz)`，转为管道形式应为 `baz|(foo.bar)`，不能是 `baz|foo.bar`。因为后者等同于 `(baz|foo).bar`
-，不符合预期。
+需要注意，如果是 `foo.bar(baz)`，转为管道形式应为 `baz|(foo.bar)`，不能是 `baz|foo.bar`。因为后者等同于 `(baz|foo).bar`。
 
 ## 定义函数
 

@@ -1,6 +1,7 @@
 package com.meituan.olee.ast;
 
 import com.meituan.olee.evaluator.EvaluateContext;
+import com.meituan.olee.exceptions.EvaluateException;
 import com.meituan.olee.grammar.Grammar;
 
 import java.util.HashMap;
@@ -20,7 +21,17 @@ public class ObjectNode extends AstNode {
     public Object evaluate(EvaluateContext context) {
         Map<Object, Object> result = new HashMap<>();
         this.entries.forEach((entry) -> {
-            result.put(entry.key.evaluate(context), entry.value.evaluate(context));
+            if (entry.key != null) {
+                result.put(entry.key.evaluate(context), entry.value.evaluate(context));
+            } else {
+                Object value = entry.value.evaluate(context);
+                if (value == null) return;
+                if (value instanceof Map) {
+                    result.putAll((Map<?, ?>) value);
+                } else {
+                    throw new EvaluateException("unsupported type for ...{}");
+                }
+            }
         });
         return result;
     }
@@ -28,6 +39,10 @@ public class ObjectNode extends AstNode {
     public static class Entry {
         public AstNode key;
         public AstNode value;
+
+        public Entry(AstNode value) {
+            this.value = value;
+        }
 
         public Entry(AstNode key, AstNode value) {
             this.key = key;
@@ -39,7 +54,7 @@ public class ObjectNode extends AstNode {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Entry that = (Entry) o;
-            return key.equals(that.key) && value.equals(that.value);
+            return Objects.equals(key, that.key) && Objects.equals(value, that.value);
         }
 
         @Override
@@ -53,6 +68,16 @@ public class ObjectNode extends AstNode {
                 "key=" + key +
                 ", value=" + value +
                 '}';
+        }
+
+        public String toExprString(Grammar grammar) {
+            if (this.key == null) {
+                return this.value.toExprString(grammar);
+            }
+            String key = this.key instanceof LiteralNode
+                ? this.key.toExprString(grammar)
+                : "[" + this.key.toExprString(grammar) + "]";
+            return key + ": " + this.value.toExprString(grammar);
         }
     }
 
@@ -78,11 +103,8 @@ public class ObjectNode extends AstNode {
 
     @Override
     public String toExprString(Grammar grammar) {
-        return this.entries.stream().map((entry) -> {
-            String key = entry.key instanceof LiteralNode
-                ? entry.key.toExprString(grammar)
-                : "[" + entry.key.toExprString(grammar) + "]";
-            return key + ": " + entry.value.toExprString(grammar);
-        }).collect(Collectors.joining(", ", "{", "}"));
+        return this.entries.stream()
+            .map((entry) -> entry.toExprString(grammar))
+            .collect(Collectors.joining(", ", "{", "}"));
     }
 }

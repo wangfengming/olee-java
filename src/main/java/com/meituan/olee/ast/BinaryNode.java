@@ -52,6 +52,8 @@ public class BinaryNode extends AstNode {
             "operator='" + operator + '\'' +
             ", left=" + left +
             ", right=" + right +
+            ", optional=" + optional +
+            ", leftOptional=" + leftOptional +
             '}';
     }
 

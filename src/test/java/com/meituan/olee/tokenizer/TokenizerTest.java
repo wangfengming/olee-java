@@ -13,7 +13,7 @@ class TokenizerTest {
     @Test
     void symbol() {
         // 符号
-        Token[] actual = this.tokenizer.tokenize(";[]{}:,()? . ?. ?.[ ?.(def=").toArray(new Token[]{});
+        Token[] actual = this.tokenizer.tokenize(";[]{}:,()? . ?. ?.[ ?.(def=...").toArray(new Token[]{});
         Token[] expected = new Token[]{
             new Token(TokenType.semi, ";", ";"),
             new Token(TokenType.openBracket, "[", "["),
@@ -31,6 +31,7 @@ class TokenizerTest {
             new Token(TokenType.optionalParen, "?.(", "?.("),
             new Token(TokenType.def, "def", "def"),
             new Token(TokenType.assign, "=", "="),
+            new Token(TokenType.spread, "...", "..."),
         };
         assertArrayEquals(expected, actual);
     }

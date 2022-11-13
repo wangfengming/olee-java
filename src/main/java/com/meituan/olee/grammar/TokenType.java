@@ -24,4 +24,5 @@ public enum TokenType {
     literal,
     fn,
     arrow,
+    spread,
 }

@@ -26,6 +26,7 @@ public class States {
             put(TokenType.openBracket, new TokenTypeOps(StateType.arrayVal, Parser::tokenArrayStart));
             put(TokenType.def, new TokenTypeOps(StateType.def));
             put(TokenType.fn, new TokenTypeOps(StateType.fn, Parser::tokenFn));
+            put(TokenType.spread, new TokenTypeOps(StateType.spread));
         }});
         this.states.put(StateType.expectOperand, expectOperand);
 
@@ -52,6 +53,7 @@ public class States {
             put(TokenType.literal, new TokenTypeOps(StateType.expectKeyValSep, Parser::tokenObjKey));
             put(TokenType.openBracket, new TokenTypeOps(StateType.objKey));
             put(TokenType.closeCurly, new TokenTypeOps(StateType.expectBinOp));
+            put(TokenType.spread, new TokenTypeOps(StateType.objSpreadVal));
         }});
         this.states.put(StateType.expectObjKey, expectObjKey);
 
@@ -126,6 +128,15 @@ public class States {
             put(TokenType.closeCurly, StateType.expectBinOp);
         }});
         this.states.put(StateType.objVal, objVal);
+
+        State objSpreadVal = new State(Parser::astObjSpreadVal, new HashMap<TokenType, StateType>() {{
+            put(TokenType.comma, StateType.expectObjKey);
+            put(TokenType.closeCurly, StateType.expectBinOp);
+        }});
+        this.states.put(StateType.objSpreadVal, objSpreadVal);
+
+        State spread = new State(Parser::astSpread, true);
+        this.states.put(StateType.spread, spread);
 
         State arrayVal = new State(Parser::astArrayVal, new HashMap<TokenType, StateType>() {{
             put(TokenType.comma, StateType.arrayVal);

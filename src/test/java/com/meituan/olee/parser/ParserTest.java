@@ -428,6 +428,33 @@ class ParserTest {
 
         assertEquals(
             new ObjectNode(new LinkedList<ObjectNode.Entry>() {{
+                add(new ObjectNode.Entry(new SpreadNode(new IdentifierNode("obj"))));
+            }}),
+            this.parse("{...obj}")
+        );
+        assertEquals("{...obj}", this.transform("{...obj}"));
+
+        assertEquals(
+            new ObjectNode(new LinkedList<ObjectNode.Entry>() {{
+                add(new ObjectNode.Entry(new LiteralNode("a"), new LiteralNode(1L)));
+                add(new ObjectNode.Entry(new SpreadNode(new IdentifierNode("obj"))));
+            }}),
+            this.parse("{a:1,...obj}")
+        );
+        assertEquals("{'a': 1, ...obj}", this.transform("{a:1,...obj}"));
+
+        assertEquals(
+            new ObjectNode(new LinkedList<ObjectNode.Entry>() {{
+                add(new ObjectNode.Entry(new LiteralNode("a"), new LiteralNode(1L)));
+                add(new ObjectNode.Entry(new SpreadNode(new IdentifierNode("obj"))));
+                add(new ObjectNode.Entry(new LiteralNode("b"), new LiteralNode(2L)));
+            }}),
+            this.parse("{a:1,...obj,b:2}")
+        );
+        assertEquals("{'a': 1, ...obj, 'b': 2}", this.transform("{a:1,...obj,b:2}"));
+
+        assertEquals(
+            new ObjectNode(new LinkedList<ObjectNode.Entry>() {{
                 add(new ObjectNode.Entry(
                     new BinaryNode(
                         "+",
@@ -475,6 +502,33 @@ class ParserTest {
             this.parse("[]")
         );
         assertEquals("[]", this.transform("[]"));
+
+        assertEquals(
+            new ArrayNode(new LinkedList<AstNode>() {{
+                add(new SpreadNode(new IdentifierNode("arr")));
+            }}),
+            this.parse("[...arr]")
+        );
+        assertEquals("[...arr]", this.transform("[...arr]"));
+
+        assertEquals(
+            new ArrayNode(new LinkedList<AstNode>() {{
+                add(new IdentifierNode("a"));
+                add(new SpreadNode(new IdentifierNode("arr")));
+            }}),
+            this.parse("[a,...arr]")
+        );
+        assertEquals("[a, ...arr]", this.transform("[a,...arr]"));
+
+        assertEquals(
+            new ArrayNode(new LinkedList<AstNode>() {{
+                add(new IdentifierNode("a"));
+                add(new SpreadNode(new IdentifierNode("arr")));
+                add(new IdentifierNode("b"));
+            }}),
+            this.parse("[a,...arr,b]")
+        );
+        assertEquals("[a, ...arr, b]", this.transform("[a,...arr,b]"));
     }
 
     @Test
