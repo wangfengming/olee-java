@@ -190,7 +190,7 @@ class EvaluateTest {
                     put("bar", "tek");
                 }});
             }},
-            this.evaluator.evaluate("{foo: {bar: 'tek'}}", null)
+            this.evaluator.evaluate("{'foo': {bar: 'tek'}}", null)
         );
 
         assertEquals(
@@ -207,7 +207,7 @@ class EvaluateTest {
 
         assertEquals(
             "bar",
-            this.evaluator.evaluate("{foo: 'bar'}.foo", null)
+            this.evaluator.evaluate("{\"foo\": 'bar'}.foo", null)
         );
         assertNull(
             this.evaluator.evaluate("{foo: 'bar'}.baz", null)
@@ -401,24 +401,96 @@ class EvaluateTest {
     }
 
     @Test
-    void lambda() throws ExecutionException {
+    void function() throws ExecutionException {
+        OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
+        evaluator.addTransform(
+            "filter",
+            (args) -> ((List<?>) args[0]).stream()
+                .filter((item) -> !OperatorUtils.isFalsy(((Callback) args[1]).apply(item)))
+                .collect(Collectors.toList())
+        );
         Map<String, Object> variables = new HashMap<String, Object>() {{
             put("foo", 10);
+            put("bar", new ArrayList<Object>() {{
+                add(Collections.singletonMap("tek", "hello"));
+                add(Collections.singletonMap("tek", "baz"));
+                add(Collections.singletonMap("tek", "baz"));
+                add(Collections.singletonMap("tok", "baz"));
+            }});
         }};
         assertEquals(
             "large",
-            this.evaluator.evaluate("foo|(@<10)?'small':'large'", variables)
+            evaluator.evaluate("foo|(fn (a) => a<10)?'small':'large'", variables)
         );
         assertEquals(
             new HashMap<String, Object>() {{
                 put("x", 9D);
                 put("y", 12D);
             }},
-            this.evaluator.evaluate("(foo+3+5)|({x:@/2,y:@/2+3})", variables)
+            evaluator.evaluate("(foo+3+5)|(fn(a) => {x:a/2,y:a/2+3})", variables)
         );
         assertEquals(
             "small",
-            this.evaluator.evaluate("def isLarge = @>@1;isLarge(1+2+3,4+5+6)?'great':'small'", variables)
+            evaluator.evaluate("def isLarge = fn(a,b)=>a>b;isLarge(1+2+3,4+5+6)?'great':'small'", variables)
+        );
+        assertEquals(
+            new ArrayList<Object>() {{
+                add(Collections.singletonMap("tek", "hello"));
+                add(Collections.singletonMap("tek", "baz"));
+                add(Collections.singletonMap("tek", "baz"));
+            }},
+            evaluator.evaluate("filter(bar,fn(a) => a.tek)", variables)
+        );
+        assertEquals(
+            evaluator.evaluate("filter(bar,fn(a) => a.tek)", variables),
+            evaluator.evaluate("bar|filter(fn(a) => a.tek)", variables)
+        );
+    }
+
+    @Test
+    void functionShort() throws ExecutionException {
+        OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
+        evaluator.addTransform(
+            "filter",
+            (args) -> ((List<?>) args[0]).stream()
+                .filter((item) -> !OperatorUtils.isFalsy(((Callback) args[1]).apply(item)))
+                .collect(Collectors.toList())
+        );
+        Map<String, Object> variables = new HashMap<String, Object>() {{
+            put("foo", 10);
+            put("bar", new ArrayList<Object>() {{
+                add(Collections.singletonMap("tek", "hello"));
+                add(Collections.singletonMap("tek", "baz"));
+                add(Collections.singletonMap("tek", "baz"));
+                add(Collections.singletonMap("tok", "baz"));
+            }});
+        }};
+        assertEquals(
+            "large",
+            evaluator.evaluate("foo|(@<10)?'small':'large'", variables)
+        );
+        assertEquals(
+            new HashMap<String, Object>() {{
+                put("x", 9D);
+                put("y", 12D);
+            }},
+            evaluator.evaluate("(foo+3+5)|({x:@/2,y:@/2+3})", variables)
+        );
+        assertEquals(
+            "small",
+            evaluator.evaluate("def isLarge = @>@1;isLarge(1+2+3,4+5+6)?'great':'small'", variables)
+        );
+        assertEquals(
+            new ArrayList<Object>() {{
+                add(Collections.singletonMap("tek", "hello"));
+                add(Collections.singletonMap("tek", "baz"));
+                add(Collections.singletonMap("tek", "baz"));
+            }},
+            evaluator.evaluate("filter(bar,fn(a) => a.tek)", variables)
+        );
+        assertEquals(
+            evaluator.evaluate("filter(bar,@.tek)", variables),
+            evaluator.evaluate("bar|filter(@.tek)", variables)
         );
     }
 

@@ -22,4 +22,6 @@ public enum TokenType {
     unaryOp,
     identifier,
     literal,
+    fn,
+    arrow,
 }

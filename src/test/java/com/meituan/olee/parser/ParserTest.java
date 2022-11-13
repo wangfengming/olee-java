@@ -691,13 +691,98 @@ class ParserTest {
     }
 
     @Test
-    void lambda() {
-        // 定义函数。@ @1 @2 分别表示函数参数。如 @.x+@1.y 表示 (args) -> args[0].x + args[1].y
+    void function() {
+        // 定义函数。
         assertEquals(
             new BinaryNode(
                 "+",
                 new FunctionCallNode(
-                    new LambdaNode(new BinaryNode(
+                    new FunctionNode(
+                        new BinaryNode(
+                            ">",
+                            new MemberNode(
+                                new IdentifierNode("a"),
+                                new LiteralNode("x")
+                            ),
+                            new LiteralNode(1L)
+                        ),
+                        new LinkedList<String>() {{
+                            add("a");
+                        }}
+                    ),
+                    new LinkedList<AstNode>() {{
+                        add(new IdentifierNode("arr"));
+                    }}
+                ).isTransform(true),
+                new LiteralNode(1L)
+            ),
+            this.parse("arr|(fn(a)=>a.x>1)+1")
+        );
+        assertEquals("arr|(fn (a) => a.x > 1)() + 1", this.transform("arr|(fn(a)=>a.x>1)+1"));
+
+        assertEquals(
+            new FunctionCallNode(
+                new IdentifierNode("filter"),
+                new LinkedList<AstNode>() {{
+                    add(new IdentifierNode("arr"));
+                    add(new FunctionNode(
+                        new ConditionNode(
+                            new BinaryNode(
+                                ">",
+                                new MemberNode(
+                                    new IdentifierNode("b"),
+                                    new LiteralNode("x")
+                                ),
+                                new LiteralNode(1L)
+                            ),
+                            new LiteralNode(2L),
+                            new LiteralNode(3L)
+                        ),
+                        new LinkedList<String>() {{
+                            add("a");
+                            add("b");
+                        }}
+                    ));
+                }}
+            ).isTransform(true),
+            this.parse("arr|filter(fn(a,b)=>b.x>1?2:3)")
+        );
+        assertEquals("arr|filter(fn (a, b) => b.x > 1 ? 2 : 3)", this.transform("arr|filter(fn(a,b)=>b.x>1?2:3)"));
+
+        assertEquals(
+            new DefNode(
+                new LinkedList<DefNode.Def>() {{
+                    add(new DefNode.Def("f", new FunctionNode(
+                        new BinaryNode(
+                            "+",
+                            new IdentifierNode("a"),
+                            new LiteralNode(1L)
+                        ),
+                        new LinkedList<String>() {{
+                            add("a");
+                        }}
+                    )));
+                }},
+                new FunctionCallNode(
+                    new IdentifierNode("f"),
+                    new ArrayList<AstNode>() {{
+                        add(new LiteralNode(2L));
+                    }}
+                )
+            ),
+            this.parse("def f = fn (a) => a + 1; f(2)")
+        );
+        assertEquals("def f = fn (a) => a + 1; f(2)", this.transform("def f = fn (a) => a + 1; f(2)"));
+    }
+
+    @Test
+    void functionShort() {
+        // 定义简版函数。@ @1 @2 分别表示函数参数。如 @.x+@1.y 表示 (args) -> args[0].x + args[1].y
+        assertEquals(
+            new BinaryNode(
+                "+",
+                new FunctionCallNode(
+                    new FunctionNode(new BinaryNode(
                         ">",
                         new MemberNode(
                             new IdentifierNode("@").argIndex(0),
@@ -720,7 +805,7 @@ class ParserTest {
                 new IdentifierNode("filter"),
                 new LinkedList<AstNode>() {{
                     add(new IdentifierNode("arr"));
-                    add(new LambdaNode(new ConditionNode(
+                    add(new FunctionNode(new ConditionNode(
                         new BinaryNode(
                             ">",
                             new MemberNode(
@@ -741,7 +826,7 @@ class ParserTest {
         assertEquals(
             new DefNode(
                 new LinkedList<DefNode.Def>() {{
-                    add(new DefNode.Def("f", new LambdaNode(new BinaryNode(
+                    add(new DefNode.Def("f", new FunctionNode(new BinaryNode(
                         "+",
                         new IdentifierNode("@").argIndex(0),
                         new LiteralNode(1L)

@@ -25,6 +25,7 @@ public class States {
             put(TokenType.openCurly, new TokenTypeOps(StateType.expectObjKey, Parser::tokenObjStart));
             put(TokenType.openBracket, new TokenTypeOps(StateType.arrayVal, Parser::tokenArrayStart));
             put(TokenType.def, new TokenTypeOps(StateType.def));
+            put(TokenType.fn, new TokenTypeOps(StateType.fn, Parser::tokenFn));
         }});
         this.states.put(StateType.expectOperand, expectOperand);
 
@@ -80,6 +81,28 @@ public class States {
             remove(TokenType.optionalParen);
         }}, true);
         this.states.put(StateType.postTransform, postTransform);
+
+        State fn = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.openParen, new TokenTypeOps(StateType.fnArg));
+        }}, true);
+        this.states.put(StateType.fn, fn);
+
+        State fnArg = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.identifier, new TokenTypeOps(StateType.fnPostArg, Parser::tokenFnArg));
+            put(TokenType.closeParen, new TokenTypeOps(StateType.fnArrow));
+        }}, true);
+        this.states.put(StateType.fnArg, fnArg);
+
+        State fnPostArg = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.comma, new TokenTypeOps(StateType.fnArg));
+            put(TokenType.closeParen, new TokenTypeOps(StateType.fnArrow));
+        }}, true);
+        this.states.put(StateType.fnPostArg, fnPostArg);
+
+        State fnArrow = new State(new HashMap<TokenType, TokenTypeOps>() {{
+            put(TokenType.arrow, new TokenTypeOps(StateType.fnExpr));
+        }}, true);
+        this.states.put(StateType.fnArrow, fnArrow);
     }
 
     private void initSubTreeState() {
@@ -133,6 +156,9 @@ public class States {
 
         State astTernaryEnd = new State(Parser::astTernaryEnd, true);
         this.states.put(StateType.ternaryEnd, astTernaryEnd);
+
+        State fnExpr = new State(Parser::astFnExpr, true);
+        this.states.put(StateType.fnExpr, fnExpr);
     }
 
     State getState(StateType state) {

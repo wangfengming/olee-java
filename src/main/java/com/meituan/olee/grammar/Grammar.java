@@ -60,6 +60,8 @@ public class Grammar {
         symbols.put("def", new SymbolGrammar(TokenType.def));
         symbols.put("=", new SymbolGrammar(TokenType.assign));
         symbols.put(";", new SymbolGrammar(TokenType.semi));
+        symbols.put("fn", new SymbolGrammar(TokenType.fn));
+        symbols.put("=>", new SymbolGrammar(TokenType.arrow));
 
         return symbols;
     }

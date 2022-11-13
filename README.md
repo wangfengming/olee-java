@@ -247,11 +247,9 @@ evaluator.evaluate("double(foo)+3", variables);
 需要注意，如果是 `foo.bar(baz)`，转为管道形式应为 `baz|(foo.bar)`，不能是 `baz|foo.bar`。因为后者等同于 `(baz|foo).bar`
 ，不符合预期。
 
-## Lambda
+## 定义函数
 
-用于定义函数，`@`表示函数参数，`@n` 表示第 `n` 个参数。如
-
-`@ + @1.x` 表示 `(args) => args[0] + args[1].x`。
+定义函数的形式是 `fn () => expression` 或者 `fn (a, b, c) => expression`。
 
 示例：
 
@@ -286,6 +284,38 @@ assertEquals(
         add(Collections.singletonMap("tek", "baz"));
         add(Collections.singletonMap("tek", "baz"));
     }},
+    evaluator.evaluate("bar|filter(fn (a) => a.tek == 'baz')", variables)
+);
+// => [{tek: "baz"}, {tek: "baz"}]
+assertEquals(
+    new ArrayList<Object>() {{
+        add("1hello");
+        add("1baz");
+        add("1baz");
+        add("1baz");
+    }},
+    evaluator.evaluate("bar|map(fn (a) => '1'+(a.tek||a.tok))", variables)
+);
+// => ["1hello", "1baz", "1baz", "1baz"]
+
+evaluator.evaluate("bar|filter(fn (a) => a.tek != null)|map(fn (a) => a.tek)", variables);
+// => ["hello", "baz", "baz"]
+```
+
+## 定义简版函数
+
+可以使用 `@` `@0` `@1` ~ `@9` 的特殊标识符来定义一个简版函数。
+`@` `@0` 表示第 0 个函数参数，`@1` ~ `@9` 分别表示第 1 ~ 9 个函数参数。
+比如：`@.x + @1` 表示 `fn (a, b) => a.x + b`。
+
+示例（代码同定义函数）：
+
+```
+assertEquals(
+    new ArrayList<Object>() {{
+        add(Collections.singletonMap("tek", "baz"));
+        add(Collections.singletonMap("tek", "baz"));
+    }},
     evaluator.evaluate("bar|filter(@.tek == 'baz')", variables)
 );
 // => [{tek: "baz"}, {tek: "baz"}]
@@ -306,7 +336,7 @@ evaluator.evaluate("bar|filter(@.tek != null)|map(@.tek)", variables);
 
 可以看出这个示例中最后一个表达式 `"bar|filter(@.tek != null)|map(@.tek)"` 非常精简。
 
-## 定义表达式内变量
+## 定义变量
 
 使用形如 `def variableName = expression; returnExpression` 的形式使用表达式内变量。
 

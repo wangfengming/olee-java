@@ -163,7 +163,7 @@ public class Parser {
 
     private AstNode maybeLambda(AstNode node) {
         return node.isMaybeLambda
-            ? new LambdaNode(node)
+            ? new FunctionNode(node)
             : node;
     }
 
@@ -223,12 +223,28 @@ public class Parser {
         this.placeBeforeCursor(node);
     }
 
+    public void astComputedMemberProperty() {
+        this.asserts(this.subTree != null);
+        ((MemberNode) this.cursor).right = this.subTree;
+    }
+
     public void tokenDefName() {
         this.defs.add(new DefNode.Def(this.token.value, null));
     }
 
+    public void astDefVal() {
+        this.asserts(this.subTree != null);
+        this.defs.getLast().value = this.maybeLambda(this.subTree);
+    }
+
     public void tokenArrayStart() {
         this.placeAtCursor(new ArrayNode(new LinkedList<>()));
+    }
+
+    public void astArrayVal() {
+        if (this.subTree != null) {
+            ((ArrayNode) this.cursor).value.add(this.subTree);
+        }
     }
 
     public void tokenObjStart() {
@@ -244,35 +260,6 @@ public class Parser {
         ((ObjectNode) this.cursor).entries.add(entry);
     }
 
-    public void tokenTernaryStart() {
-        this.tree = new ConditionNode(this.tree, null, null);
-        this.cursor = this.tree;
-    }
-
-    public void tokenTransform() {
-        this.rotatePriority(this.grammar.PIPE_PRIORITY);
-        AstNode func = token.type == TokenType.identifier
-            ? new IdentifierNode(this.token.value)
-            : null;
-        FunctionCallNode node = new FunctionCallNode(func, new LinkedList<>()).isTransform(true);
-        node.args.add(this.cursor);
-        this.placeBeforeCursor(node);
-    }
-
-    public void tokenFunctionCall() {
-        this.rotatePriority(this.grammar.FUNCTION_CALL_PRIORITY);
-        AstNode node = new FunctionCallNode(this.cursor, new LinkedList<>());
-        node.optional = this.token.type == TokenType.optionalParen;
-        this.leftOptional(node);
-        this.placeBeforeCursor(node);
-    }
-
-    public void astArrayVal() {
-        if (this.subTree != null) {
-            ((ArrayNode) this.cursor).value.add(this.subTree);
-        }
-    }
-
     public void astObjKey() {
         this.asserts(this.subTree != null);
         ObjectNode.Entry entry = new ObjectNode.Entry(this.subTree, null);
@@ -285,6 +272,11 @@ public class Parser {
         entries.getLast().value = this.subTree;
     }
 
+    public void tokenTernaryStart() {
+        this.tree = new ConditionNode(this.tree, null, null);
+        this.cursor = this.tree;
+    }
+
     public void astTernaryMid() {
         this.asserts(this.subTree != null);
         ((ConditionNode) this.cursor).consequent = this.subTree;
@@ -295,15 +287,28 @@ public class Parser {
         ((ConditionNode) this.cursor).alternate = this.subTree;
     }
 
-    public void astDefVal() {
-        this.asserts(this.subTree != null);
-        this.defs.getLast().value = this.maybeLambda(this.subTree);
+    public void tokenTransform() {
+        this.rotatePriority(this.grammar.PIPE_PRIORITY);
+        AstNode func = token.type == TokenType.identifier
+            ? new IdentifierNode(this.token.value)
+            : null;
+        FunctionCallNode node = new FunctionCallNode(func, new LinkedList<>()).isTransform(true);
+        node.args.add(this.cursor);
+        this.placeBeforeCursor(node);
     }
 
     public void astExprTransform() {
         this.asserts(this.subTree != null);
         this.isMaybeLambda = false;
         ((FunctionCallNode) this.cursor).func = this.maybeLambda(this.subTree);
+    }
+
+    public void tokenFunctionCall() {
+        this.rotatePriority(this.grammar.FUNCTION_CALL_PRIORITY);
+        AstNode node = new FunctionCallNode(this.cursor, new LinkedList<>());
+        node.optional = this.token.type == TokenType.optionalParen;
+        this.leftOptional(node);
+        this.placeBeforeCursor(node);
     }
 
     public void astArgVal() {
@@ -313,13 +318,23 @@ public class Parser {
         }
     }
 
+    public void tokenFn() {
+        this.placeAtCursor(new FunctionNode(new LinkedList<>()));
+    }
+
+    public void tokenFnArg() {
+        ((FunctionNode) this.cursor).argNames.add(this.token.value);
+    }
+
+    public void astFnExpr() {
+        this.asserts(this.subTree != null);
+        ((FunctionNode) this.cursor).expr = this.subTree;
+        this.isMaybeLambda = false;
+    }
+
     public void astSubExp() {
         this.asserts(this.subTree != null);
         this.placeAtCursor(this.subTree);
     }
 
-    public void astComputedMemberProperty() {
-        this.asserts(this.subTree != null);
-        ((MemberNode) this.cursor).right = this.subTree;
-    }
 }
