@@ -7,7 +7,6 @@ import com.meituan.olee.evaluator.Expression;
 import com.meituan.olee.evaluator.PropertyAccessor;
 import com.meituan.olee.exceptions.ParseException;
 import com.meituan.olee.grammar.BinaryOpGrammar;
-import com.meituan.olee.grammar.Callback;
 import com.meituan.olee.grammar.Grammar;
 import com.meituan.olee.grammar.UnaryOpGrammar;
 import com.meituan.olee.parser.Parser;

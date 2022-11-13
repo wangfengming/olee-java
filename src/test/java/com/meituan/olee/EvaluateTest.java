@@ -1,7 +1,6 @@
 package com.meituan.olee;
 
 import com.meituan.olee.exceptions.EvaluateException;
-import com.meituan.olee.grammar.Callback;
 import com.meituan.olee.util.OperatorUtils;
 import org.junit.jupiter.api.Test;
 

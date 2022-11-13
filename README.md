@@ -231,7 +231,7 @@ evaluator.evaluate("1+2", null); // => throws
 支持方法调用，如：
 
 ```
-import com.meituan.olee.grammar.Callback;
+import com.meituan.olee.Callback;
 
 Map<String, Object> variables = new HashMap<String, Object>() {{
     put("foo", 10);
@@ -263,7 +263,7 @@ evaluator.evaluate("double(foo)+3", variables);
 示例：
 
 ```
-import com.meituan.olee.grammar.Callback;
+import com.meituan.olee.Callback;
 
 OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
 evaluator.addTransform(

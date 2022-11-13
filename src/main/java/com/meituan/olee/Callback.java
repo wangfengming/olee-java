@@ -1,4 +1,4 @@
-package com.meituan.olee.grammar;
+package com.meituan.olee;
 
 @FunctionalInterface
 public interface Callback {

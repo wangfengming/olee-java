@@ -1,7 +1,7 @@
 package com.meituan.olee.ast;
 
+import com.meituan.olee.Callback;
 import com.meituan.olee.evaluator.EvaluateContext;
-import com.meituan.olee.grammar.Callback;
 import com.meituan.olee.grammar.Grammar;
 
 import java.util.LinkedList;
