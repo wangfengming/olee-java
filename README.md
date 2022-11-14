@@ -12,13 +12,13 @@ import com.meituan.olee.evaluator.Expression;
 
 OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
 
-expression.evaluate('1+x', new HashMap<String, Number>() {{
+evaluator.evaluate('1+x', new HashMap<String, Number>() {{
   put("x", 2);
 }});
 // => 3
 
-Expression exp = evaluator.compile('1+x');
-exp.evalute(new HashMap<String, Number>() {{
+Expression expression = evaluator.compile('1+x');
+expression.evalute(new HashMap<String, Number>() {{
   put("x", 2);
 }});
 // => 3
@@ -43,6 +43,18 @@ TODO
 
 使用 `{key: value}` 可以定义对象。如 `{name:'Nikola',age: 25,dob:'10-July-1856'}` 计算结果为 `HashMap<String, Object>`。
 
+## 注入变量
+
+求值时，可以注入变量。如
+
+```
+HashMap<String, Number> variables = new HashMap<String, Number>() {{
+  put("x", 2);
+}};
+evaluator.evaluate('1+x', variables);
+// => 3
+```
+
 ## 属性访问
 
 `.` `[]`。 支持形如 `a.b.c` `a['b'].c` `a.b[0][1]` 等等。
@@ -56,6 +68,7 @@ TODO
 若需要支持其他类型实例，需要进行设置，如：
 
 ```
+import com.meituan.olee.OneLineExpressionEvaluator;
 import com.meituan.olee.evaluator.DefaultPropertyAccessor;
 import com.meituan.olee.exceptions.EvaluateException;
 
@@ -226,6 +239,12 @@ evaluator.evaluate("1+2", null); // => throws
 | 90  |      `!` `+` `-`       | 一元操作符      |
 | 100 |  `.` `?.` `[]` `?.[]`  | 成员访问       |
 
+## 定义变量
+
+使用形如 `def variableName = expression; returnExpression` 的形式使用表达式内变量。
+
+如：`def a=1; def b=2; a+b` => `3`，`def a=1; def b=a+1; a+b` => `3`
+
 ## 方法调用
 
 支持方法调用，如：
@@ -256,6 +275,23 @@ evaluator.evaluate("double(foo)+3", variables);
 
 需要注意，如果是 `foo.bar(baz)`，转为管道形式应为 `baz|(foo.bar)`，不能是 `baz|foo.bar`。因为后者等同于 `(baz|foo).bar`。
 
+## 特殊函数注入方式
+
+除了使用 `variables` 的方式注入函数外，还可以使用 `addTransform` 注入函数，如：
+
+```
+OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
+evaluator.addTransform(
+    "half",
+    (args) -> ((Number) args[0]).doubleValue() / 2
+);
+
+evaluator.evaluate("half(6)", null);
+// => 3
+evaluator.evaluate("6|half", null);
+// => 3
+```
+
 ## 定义函数
 
 定义函数的形式是 `fn () => expression` 或者 `fn (a, b, c) => expression`。
@@ -265,7 +301,6 @@ evaluator.evaluate("double(foo)+3", variables);
 ```
 import com.meituan.olee.Callback;
 
-OneLineExpressionEvaluator evaluator = new OneLineExpressionEvaluator();
 evaluator.addTransform(
     "filter",
     (args) -> ((List<?>) args[0]).stream()
@@ -344,12 +379,6 @@ evaluator.evaluate("bar|filter(@.tek != null)|map(@.tek)", variables);
 ```
 
 可以看出这个示例中最后一个表达式 `"bar|filter(@.tek != null)|map(@.tek)"` 非常精简。
-
-## 定义变量
-
-使用形如 `def variableName = expression; returnExpression` 的形式使用表达式内变量。
-
-如：`def a=1; def b=2; a+b` => `3`，`def a=1; def b=a+1; a+b` => `3`
 
 ## 注意
 
